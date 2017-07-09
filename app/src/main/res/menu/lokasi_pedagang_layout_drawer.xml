@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_beranda"
+            android:icon="@drawable/ic_menu_home"
+            android:title="Beranda" />
+        <item
+            android:id="@+id/nav_login"
+            android:icon="@drawable/ic_menu_person"
+            android:title="Login" />
+        <item
+            android:id="@+id/nav_registrasi"
+            android:icon="@drawable/ic_menu_person_add"
+            android:title="Registrasi" />
+        <item
+            android:id="@+id/nav_tentang"
+            android:icon="@drawable/ic_menu_info"
+            android:title="Tentang" />
+    </group>
+
+</menu>
