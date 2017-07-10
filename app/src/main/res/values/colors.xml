@@ -23,4 +23,7 @@
     <color name="base">#AAAAAA</color>
     <color name="iron">#CCCCCC</color>
     <color name="white">#FFFFFF</color>
+
+    <color name="colorOnline">#8BC34A</color>
+    <color name="colorOffline">#F44336</color>
 </resources>
