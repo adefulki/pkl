@@ -312,6 +312,7 @@ public class SignupActivity extends AppCompatActivity {
             }
 
             JSONObject dataToSend = null;
+
             try {
                 dataToSend = new JSONObject()
                         .put("noPonselPedagang", mNoPonsel)

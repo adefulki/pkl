@@ -40,7 +40,18 @@ dependencies {
 
     //OkHttp
     compile 'com.squareup.okhttp3:okhttp:3.8.0'
+
+    //Universal Image Loader
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+}
+task run(type: Task, dependsOn: 'installDebug') {
+    doLast {
+        println "Running application ..."
+        "adb shell am start -c android.intent.category.HOME -n com.kota201.jtk.pkl/com.kota201.jtk.pkl.LokasiPedagangActivity".execute()
+    }
 }
 
+
+defaultTasks 'run'
 //Butter Knife
 apply plugin: 'com.jakewharton.butterknife'

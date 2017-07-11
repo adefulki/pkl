@@ -1,0 +1,37 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <RadioGroup
+        android:id="@+id/radioGroupFilter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/radioBtnDagangan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Dagangan" />
+
+        <RadioButton
+            android:id="@+id/radioBtnProduk"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Produk" />
+
+        <RadioButton
+            android:id="@+id/radioBtnPedagang"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pedagang" />
+    </RadioGroup>
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btnLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/radioGroupFilter"
+        android:text="Ok" />
+</RelativeLayout>

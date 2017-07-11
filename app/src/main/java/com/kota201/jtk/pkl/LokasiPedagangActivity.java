@@ -1,31 +1,36 @@
 package com.kota201.jtk.pkl;
 
 import android.Manifest;
+import android.app.Dialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.SearchRecentSuggestions;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,9 +57,11 @@ import com.kota201.jtk.pkl.restful.GetMethod;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.LoggerFactory;
+import org.slf4j.impl.AndroidLoggerFactory;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
@@ -71,6 +78,9 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
     @BindView(R.id.drawer_layout) DrawerLayout drawer;
     @BindView(R.id.nav_view) NavigationView navigationView;
 
+    private MenuItem searchItem;
+    private SearchRecentSuggestions suggestions;
+    private SearchView searchView;
     private LocationManager locationManager;
     private GoogleMap mMap;
     private static final long MIN_TIME = 400;
@@ -79,15 +89,24 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private UiSettings mUiSettings;
     private ClusterManager<Dagangan> mClusterManager;
+    private static final org.slf4j.Logger log;
+    static {
+        AndroidLoggerFactory.configureDefaultLogger(LokasiPedagangActivity.class.getPackage());
+        log = LoggerFactory.getLogger(LokasiPedagangActivity.class);
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        log.info("onCreate() intent:{}", getIntent());
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.lokasi_pedagang);
 
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         //Drawer
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -115,31 +134,48 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
             return;
         }
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
-    }
 
-    //-------------------- START Options Menu --------------------//
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.lokasi_pedagang, menu);
-        return true;
-    }
+        //Search
+        suggestions = new SearchRecentSuggestions(this, SuggestionProvider.AUTHORITY,
+                SuggestionProvider.MODE);
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        log.debug("onCreateOptionsMenu() searchManager: {}", searchManager);
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        searchView = new SearchView(getSupportActionBar().getThemedContext());
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setSubmitButtonEnabled(false);
+        searchView.setIconifiedByDefault(true);
+        searchView.setMaxWidth(1000);
+
+        SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete) searchView
+                .findViewById(android.support.v7.appcompat.R.id.search_src_text);
+
+        // Collapse the search menu when the user hits the back key
+        searchAutoComplete.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                log.trace("onFocusChange(): " + hasFocus);
+                if (!hasFocus)
+                    showSearch(false);
+            }
+        });
+
+        try {
+            // This sets the cursor
+            // resource ID to 0 or @null
+            // which will make it visible
+            // on white background
+            Field mCursorDrawableRes = TextView.class.getDeclaredField("mCursorDrawableRes");
+
+            mCursorDrawableRes.setAccessible(true);
+            mCursorDrawableRes.set(searchAutoComplete, 0);
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        return super.onOptionsItemSelected(item);
     }
-    //-------------------- END Options Menu --------------------//
 
     //-------------------- START Navigation --------------------//
     @SuppressWarnings("StatementWithEmptyBody")
@@ -202,8 +238,17 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
         mMap.setOnMarkerClickListener(mClusterManager);
         mMap.setOnInfoWindowClickListener(mClusterManager);
         mClusterManager.setOnClusterClickListener(this);
-        addItems();
-        mClusterManager.cluster();
+        final Handler h = new Handler();
+        h.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // TODO Auto-generated method stub
+                mClusterManager.clearItems();
+                addItems();
+                mClusterManager.cluster();
+                h.postDelayed(this, 5000);
+            }
+        }, 5000);
     }
 
     //-------------------- START Permission Access Fine Location --------------------//
@@ -351,42 +396,14 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
 
         @Override
         protected void onBeforeClusterRendered(Cluster<Dagangan> cluster, MarkerOptions markerOptions) {
-            // Draw multiple people.
-            // Note: this method runs on the UI thread. Don't spend too much time in here (like in this example).
-            List<Drawable> profilePhotos = new ArrayList<Drawable>(Math.min(4, cluster.getSize()));
-            int width = mDimension;
-            int height = mDimension;
-            int counterRecomendation = 0;
+            int i=0;
+            mClusterStar.setVisibility(View.INVISIBLE);
             for (Dagangan p : cluster.getItems()) {
-                // Draw 4 at most.
-                if (profilePhotos.size() == 4) break;
-
-                GetImageMethod getImageMethod = new GetImageMethod();
-
-                byte[] image = new byte[0];
-                try{
-                    image = getImageMethod.execute("http://carmate.id/assets/image/"+p.getFotoDagangan()+".jpg").get();
-                    if (image != null && image.length > 0){
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
-                        Drawable drawable = new BitmapDrawable(getResources(), bitmap);
-                        drawable.setBounds(0, 0, width, height);
-                        profilePhotos.add(drawable);
-                    }
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-
                 if (p.getStatusRecommendation() == Boolean.TRUE)
-                    counterRecomendation++;
-
+                    mClusterStar.setVisibility(View.VISIBLE);
+                i++;
             }
-            MultiDrawable multiDrawable = new MultiDrawable(profilePhotos);
-            multiDrawable.setBounds(0, 0, width, height);
-
-            if (counterRecomendation > 0)
-                mClusterStar.setVisibility(View.VISIBLE);
-            mClusterImageView.setImageDrawable(multiDrawable);
-            mClusterTextView.setText(String.valueOf(profilePhotos.size()));
+            mClusterTextView.setText(String.valueOf(i));
 
             Bitmap icon = mClusterIconGenerator.makeIcon(String.valueOf(cluster.getSize()));
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
@@ -491,4 +508,79 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
     //-------------------- END Marker Cluster --------------------//
 
     //-------------------- END Google Maps --------------------//
+
+    //-------------------- START Search --------------------//
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        searchItem = menu.add(android.R.string.search_go);
+
+        searchItem.setIcon(R.drawable.ic_search);
+
+        MenuItemCompat.setActionView(searchItem, searchView);
+
+        MenuItemCompat.setShowAsAction(searchItem,
+                MenuItemCompat.SHOW_AS_ACTION_ALWAYS | MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+
+
+        getMenuInflater().inflate(R.menu.filter, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        log.warn("onNewIntent() :{}", intent);
+        showSearch(false);
+        Bundle extras = intent.getExtras();
+        String userQuery = String.valueOf(extras.get(SearchManager.USER_QUERY));
+        String query = String.valueOf(extras.get(SearchManager.QUERY));
+
+        log.debug("query: {} user_query: {}", query, userQuery);
+        Toast.makeText(this, "query: " + query + " user_query: " + userQuery, Toast.LENGTH_SHORT)
+                .show();
+    }
+
+    protected void showSearch(boolean visible) {
+        if (visible)
+            MenuItemCompat.expandActionView(searchItem);
+        else
+            MenuItemCompat.collapseActionView(searchItem);
+    }
+
+    /**
+     * Called when the hardware search button is pressed
+     */
+    @Override
+    public boolean onSearchRequested() {
+        log.trace("onSearchRequested();");
+        showSearch(true);
+
+        // dont show the built-in search dialog
+        return false;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.filter:
+                Dialog dialog = new Dialog(LokasiPedagangActivity.this);
+                dialog.setContentView(R.layout.filter_dialog);
+                dialog.setTitle("Filter");
+                dialog.setCancelable(true);
+                // there are a lot of settings, for dialog, check them all out!
+                // set up radiobutton
+                RadioButton radioBtnDagangan = (RadioButton) dialog.findViewById(R.id.radioBtnDagangan);
+                RadioButton radioBtnProduk = (RadioButton) dialog.findViewById(R.id.radioBtnProduk);
+                RadioButton radioProdukPembeli = (RadioButton) dialog.findViewById(R.id.radioBtnPembeli);
+
+                // now that the dialog is set up, it's time to show it
+                dialog.show();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+    //-------------------- END Search --------------------//
 }
