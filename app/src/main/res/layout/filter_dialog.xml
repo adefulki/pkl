@@ -9,6 +9,12 @@
         android:orientation="vertical">
 
         <RadioButton
+            android:id="@+id/radioBtnPedagang"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pedagang" />
+
+        <RadioButton
             android:id="@+id/radioBtnDagangan"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -19,12 +25,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Produk" />
-
-        <RadioButton
-            android:id="@+id/radioBtnPedagang"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Pedagang" />
     </RadioGroup>
 
     <android.support.v7.widget.AppCompatButton

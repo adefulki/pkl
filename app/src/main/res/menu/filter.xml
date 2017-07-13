@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:id="@+id/filter"
-        android:icon="@drawable/ic_filter_list"
-        android:orderInCategory="100"
-        app:showAsAction="always"
-        android:title="filter" />
+    <group
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/radioBtnDagangan"
+            android:orderInCategory="1"
+            android:title="Dagangan"
+            android:checked="true"/>
+
+        <item
+            android:id="@+id/radioBtnProduk"
+            android:orderInCategory="2"
+            android:title="Produk"/>
+
+        <item
+            android:id="@+id/radioBtnPedagang"
+            android:orderInCategory="3"
+            android:title="Pedagang"/>
+    </group>
 </menu>

@@ -6,16 +6,11 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowContentTransitions">true</item>
-        <item name="android:windowAllowEnterTransitionOverlap">true</item>
-        <item name="android:windowAllowReturnTransitionOverlap">true</item>
-        <item name="android:windowSharedElementEnterTransition">@android:transition/move</item>
-        <item name="android:windowSharedElementExitTransition">@android:transition/move</item>
         <item name="colorControlNormal">@color/colorAccent</item>
         <item name="colorControlActivated">@color/colorPrimaryDarker</item>
         <item name="colorControlHighlight">@color/colorPrimaryDarker</item>
-        <item name="android:textColor">@color/colorAccent</item>
         <item name="colorButtonNormal">@color/colorPrimaryDarker</item>
+        <item name="android:actionOverflowButtonStyle">@style/Widget.ActionButton.Overflow</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -89,5 +84,9 @@
         <item name="colorAccent">@color/colorPrimaryDarker</item>
         <item name="android:background">?attr/background</item>
         <item name="alertDialogCenterButtons">true</item>
+    </style>
+
+    <style name="Widget.ActionButton.Overflow" parent="@android:style/Widget.Holo.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_filter_list</item>
     </style>
 </resources>

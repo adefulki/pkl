@@ -20,7 +20,6 @@
         android:theme="@style/AppTheme"
         android:hardwareAccelerated="false"
         android:largeHeap="true">
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
@@ -40,7 +39,6 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:launchMode="singleTop">
             <intent-filter>
-                <category android:name="android.intent.category.HOME"/>
                 <action android:name="android.intent.action.SEARCH"/>
             </intent-filter>
             <meta-data
@@ -53,10 +51,19 @@
         <activity
             android:name=".SignupActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".ResultSearchActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <provider
             android:name=".SuggestionProvider"
             android:authorities="com.kota201.jtk.pkl.SuggestionProvider"
             android:exported="false"/>
+
+        <receiver android:name=".service.NetworkChangeReceiver" >
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

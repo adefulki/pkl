@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.kota201.jtk.pkl.service.NetworkChangeReceiver;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -227,6 +230,9 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
 
+            if(!NetworkChangeReceiver.isNetworkAvailable(getBaseContext()))
+                return false;
+
             JSONObject dataToSend = null;
             try {
                 dataToSend = new JSONObject()
@@ -294,5 +300,19 @@ public class LoginActivity extends AppCompatActivity {
             progressDialog.dismiss();
         }
     }
+
+    //Network
+    public boolean isOnline(Context c) {
+        ConnectivityManager cm = (ConnectivityManager) c
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo ni = cm.getActiveNetworkInfo();
+
+        if (ni != null && ni.isConnected())
+            return true;
+        else
+            return false;
+    }
+
+
 
 }

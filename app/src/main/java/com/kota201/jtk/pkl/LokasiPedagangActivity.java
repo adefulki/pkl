@@ -1,16 +1,18 @@
 package com.kota201.jtk.pkl;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.app.SearchManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.SearchRecentSuggestions;
@@ -25,12 +27,12 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +55,7 @@ import com.google.maps.android.ui.IconGenerator;
 import com.kota201.jtk.pkl.model.Dagangan;
 import com.kota201.jtk.pkl.restful.GetImageMethod;
 import com.kota201.jtk.pkl.restful.GetMethod;
+import com.kota201.jtk.pkl.service.NetworkChangeReceiver;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -83,6 +86,7 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
     private SearchView searchView;
     private LocationManager locationManager;
     private GoogleMap mMap;
+    private int filter=0;
     private static final long MIN_TIME = 400;
     private static final float MIN_DISTANCE = 1000;
     private boolean mPermissionDenied = false;
@@ -90,6 +94,9 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
     private UiSettings mUiSettings;
     private ClusterManager<Dagangan> mClusterManager;
     private static final org.slf4j.Logger log;
+    private Handler handler;
+    private Runnable runnable;
+    private BroadcastReceiver mNetworkReceiver;
     static {
         AndroidLoggerFactory.configureDefaultLogger(LokasiPedagangActivity.class.getPackage());
         log = LoggerFactory.getLogger(LokasiPedagangActivity.class);
@@ -115,6 +122,11 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
+
+        //Broadcast Receiver
+
+        mNetworkReceiver = new NetworkChangeReceiver();
+        registerReceiver(mNetworkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
         //Google Maps
         SupportMapFragment mapFragment =
@@ -238,17 +250,20 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
         mMap.setOnMarkerClickListener(mClusterManager);
         mMap.setOnInfoWindowClickListener(mClusterManager);
         mClusterManager.setOnClusterClickListener(this);
-        final Handler h = new Handler();
-        h.postDelayed(new Runnable() {
+        handler = new Handler();
+        runnable = new Runnable() {
             @Override
             public void run() {
                 // TODO Auto-generated method stub
-                mClusterManager.clearItems();
-                addItems();
-                mClusterManager.cluster();
-                h.postDelayed(this, 5000);
+                if(NetworkChangeReceiver.isNetworkAvailable(getBaseContext())){
+                    mClusterManager.clearItems();
+                    addItems();
+                    mClusterManager.cluster();
+                }
+                handler.postDelayed(this, 5000);
             }
-        }, 5000);
+        };
+        handler.postDelayed(runnable, 5000);
     }
 
     //-------------------- START Permission Access Fine Location --------------------//
@@ -359,39 +374,40 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
 
         @Override
         protected void onBeforeClusterItemRendered(Dagangan dagangan, MarkerOptions markerOptions) {
-            // Draw a single person.
-            // Set the info window to show their name.
-            GetImageMethod getImageMethod = new GetImageMethod();
 
-            byte[] image = new byte[0];
-            try{
-                image = getImageMethod.execute("http://carmate.id/assets/image/"+dagangan.getFotoDagangan()+".jpg").get();
-                if (image != null && image.length > 0){
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
-                    mSingleImageView.setImageBitmap(bitmap);
-                }
+                // Set the info window to show their name.
+                GetImageMethod getImageMethod = new GetImageMethod();
 
-                if (dagangan.getStatusRecommendation() == Boolean.FALSE)
-                    mSingleStar.setVisibility(View.INVISIBLE);
-                else mSingleStar.setVisibility(View.VISIBLE);
+                byte[] image = new byte[0];
+                try{
+                    image = getImageMethod.execute("http://carmate.id/assets/image/"+dagangan.getFotoDagangan()+".jpg").get();
+                    if (image != null && image.length > 0){
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+                        mSingleImageView.setImageBitmap(bitmap);
+                    }
 
-                if ( dagangan.getTipeDagangan() == Boolean.FALSE){
-                    mSingleIcon.setImageResource(R.drawable.icon_diam);
-                    if (dagangan.getStatusBerjualan() == Boolean.TRUE)
+                    if (dagangan.getStatusRecommendation() == Boolean.FALSE)
+                        mSingleStar.setVisibility(View.INVISIBLE);
+                    else mSingleStar.setVisibility(View.VISIBLE);
+
+                    if ( dagangan.getTipeDagangan() == Boolean.FALSE){
+                        mSingleIcon.setImageResource(R.drawable.icon_diam);
+                        if (dagangan.getStatusBerjualan() == Boolean.TRUE)
+                            mSingleFrame.setBackgroundResource(R.color.colorOnline);
+                        else mSingleFrame.setBackgroundResource(R.color.colorOffline);
+                    }else{
+                        mSingleIcon.setImageResource(R.drawable.icon_berjalan);
                         mSingleFrame.setBackgroundResource(R.color.colorOnline);
-                    else mSingleFrame.setBackgroundResource(R.color.colorOffline);
-                }else{
-                    mSingleIcon.setImageResource(R.drawable.icon_berjalan);
-                    mSingleFrame.setBackgroundResource(R.color.colorOnline);
+                    }
+
+
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
 
+                Bitmap icon = mIconGenerator.makeIcon();
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(dagangan.getNamaDagangan());
 
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-
-            Bitmap icon = mIconGenerator.makeIcon();
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(dagangan.getNamaDagangan());
         }
 
         @Override
@@ -465,43 +481,44 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
     public ArrayList<Dagangan> getDaganganLocation(){
         ArrayList<Dagangan> listDagangan = new ArrayList<>();
 
-        GetMethod getMethod = (GetMethod) new GetMethod().execute(
-                "http://carmate.id/index.php/Dagangan_controller/getAllDaganganLocation");
-        String jsonData = null;
-        JSONArray Jobject = null;
+            GetMethod getMethod = (GetMethod) new GetMethod().execute(
+                    "http://carmate.id/index.php/Dagangan_controller/getAllDaganganLocation");
+            String jsonData = null;
+            JSONArray Jobject = null;
 
-        try {
-            jsonData = getMethod.get();
-            Jobject = new JSONArray(jsonData);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
-        for (int i = 0; i < Jobject.length(); i++) {
-            JSONObject c = null;
-            Dagangan dagangan = new Dagangan();
             try {
-                c = Jobject.getJSONObject(i);
-                dagangan.setIdDagangan(c.getString("idDagangan"));
-                dagangan.setNamaDagangan(c.getString("namaDagangan"));
-                dagangan.setFotoDagangan(c.getString("fotoDagangan"));
-                dagangan.setLatDagangan(c.getDouble("latDagangan"));
-                dagangan.setLngDagangan(c.getDouble("lngDagangan"));
-                dagangan.setMeanPenilaianDagangan(c.getDouble("meanPenilaianDagangan"));
-                dagangan.setCountPenilaianDagangan(c.getInt("countPenilaianDagangan"));
-                dagangan.setStatusRecommendation(c.getBoolean("statusRecommendation"));
-                dagangan.setStatusBerjualan(c.getBoolean("statusBerjualan"));
-                dagangan.setTipeDagangan(c.getBoolean("tipeDagangan"));
+                jsonData = getMethod.get();
+                Jobject = new JSONArray(jsonData);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            listDagangan.add(dagangan);
-        }
+
+
+            for (int i = 0; i < Jobject.length(); i++) {
+                JSONObject c = null;
+                Dagangan dagangan = new Dagangan();
+                try {
+                    c = Jobject.getJSONObject(i);
+                    dagangan.setIdDagangan(c.getString("idDagangan"));
+                    dagangan.setNamaDagangan(c.getString("namaDagangan"));
+                    dagangan.setFotoDagangan(c.getString("fotoDagangan"));
+                    dagangan.setLatDagangan(c.getDouble("latDagangan"));
+                    dagangan.setLngDagangan(c.getDouble("lngDagangan"));
+                    dagangan.setMeanPenilaianDagangan(c.getDouble("meanPenilaianDagangan"));
+                    dagangan.setCountPenilaianDagangan(c.getInt("countPenilaianDagangan"));
+                    dagangan.setStatusRecommendation(c.getBoolean("statusRecommendation"));
+                    dagangan.setStatusBerjualan(c.getBoolean("statusBerjualan"));
+                    dagangan.setTipeDagangan(c.getBoolean("tipeDagangan"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                listDagangan.add(dagangan);
+            }
+
 
         return listDagangan;
     }
@@ -538,8 +555,12 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
         String query = String.valueOf(extras.get(SearchManager.QUERY));
 
         log.debug("query: {} user_query: {}", query, userQuery);
-        Toast.makeText(this, "query: " + query + " user_query: " + userQuery, Toast.LENGTH_SHORT)
-                .show();
+        suggestions.saveRecentQuery(query,"");
+        intent = new Intent(getBaseContext(), ResultSearchActivity.class);
+        intent.putExtra("query", query);
+        intent.putExtra("userQuery", userQuery);
+        intent.putExtra("filter",filter);
+        startActivity(intent);
     }
 
     protected void showSearch(boolean visible) {
@@ -558,29 +579,33 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
         showSearch(true);
 
         // dont show the built-in search dialog
-        return false;
+        return super.onSearchRequested();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.filter:
-                Dialog dialog = new Dialog(LokasiPedagangActivity.this);
-                dialog.setContentView(R.layout.filter_dialog);
-                dialog.setTitle("Filter");
-                dialog.setCancelable(true);
-                // there are a lot of settings, for dialog, check them all out!
-                // set up radiobutton
-                RadioButton radioBtnDagangan = (RadioButton) dialog.findViewById(R.id.radioBtnDagangan);
-                RadioButton radioBtnProduk = (RadioButton) dialog.findViewById(R.id.radioBtnProduk);
-                RadioButton radioProdukPembeli = (RadioButton) dialog.findViewById(R.id.radioBtnPembeli);
-
-                // now that the dialog is set up, it's time to show it
-                dialog.show();
+            case R.id.radioBtnDagangan:
+                if (item.isChecked()) item.setChecked(false);
+                else item.setChecked(true);
+                filter = 0;
+                Log.i("filter","Dagangan");
                 return true;
+            case R.id.radioBtnProduk:
+                if (item.isChecked()) item.setChecked(false);
+                else item.setChecked(true);
+                filter = 1;
+                Log.i("filter","Produk");
+                return true;
+            case R.id.radioBtnPedagang:
+                if (item.isChecked()) item.setChecked(false);
+                else item.setChecked(true);
+                filter = 2;
+                Log.i("filter","Pedagang");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
     //-------------------- END Search --------------------//
 }

@@ -1,7 +1,9 @@
 package com.kota201.jtk.pkl;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -29,7 +31,6 @@ public class SplashActivity extends Activity{
                 new Runnable() {
                     @Override
                     public void run() {
-                        if (isNetworkConnected() == true) {
                             SharedPreferences prefs = getSharedPreferences(my_prefs, MODE_PRIVATE);
                             String restoredText = prefs.getString("text", null);
                             if (restoredText != null) {
@@ -43,12 +44,7 @@ public class SplashActivity extends Activity{
                                 startActivity(new Intent(SplashActivity.this, LokasiPedagangActivity.class));
                                 finish();
                             }
-                        }else{
-                            Intent intent = new Intent(Intent.ACTION_MAIN);
-                            intent.addCategory(Intent.CATEGORY_HOME);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
-                        }
+
                     }
                 }, SPLASH_TIME_OUT);
     }
@@ -58,4 +54,24 @@ public class SplashActivity extends Activity{
 
         return cm.getActiveNetworkInfo() != null;
     }
+
+    public void createDialog() {
+        AlertDialog.Builder errorDialog = new AlertDialog.Builder(this);
+        errorDialog.setTitle("Error");
+        errorDialog.setMessage("No internet connection.");
+        errorDialog.setNeutralButton("OK",
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        android.os.Process.killProcess(android.os.Process.myPid());
+                        System.exit(1);
+                        dialog.dismiss();
+                    }
+                });
+
+        errorDialog.create();
+    }
+
+
 }

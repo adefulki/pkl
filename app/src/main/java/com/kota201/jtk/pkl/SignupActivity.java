@@ -20,6 +20,8 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.kota201.jtk.pkl.service.NetworkChangeReceiver;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -240,6 +242,9 @@ public class SignupActivity extends AppCompatActivity {
             } catch (InterruptedException e) {
                 return false;
             }
+
+            if(!NetworkChangeReceiver.isNetworkAvailable(getBaseContext()))
+                return false;
 
             JSONObject dataToSend = null;
             try {
