@@ -13,7 +13,7 @@ public class Dagangan implements ClusterItem {
     private String fotoDagangan;
     private Double latDagangan;
     private Double lngDagangan;
-    private Double meanPenilaianDagangan;
+    private int meanPenilaianDagangan;
     private Integer countPenilaianDagangan;
     private Boolean statusRecommendation;
     private Boolean statusBerjualan;
@@ -59,11 +59,11 @@ public class Dagangan implements ClusterItem {
         this.lngDagangan = lngDagangan;
     }
 
-    public Double getMeanPenilaianDagangan() {
+    public int getMeanPenilaianDagangan() {
         return meanPenilaianDagangan;
     }
 
-    public void setMeanPenilaianDagangan(Double meanPenilaianDagangan) {
+    public void setMeanPenilaianDagangan(int meanPenilaianDagangan) {
         this.meanPenilaianDagangan = meanPenilaianDagangan;
     }
 

@@ -1,6 +1,7 @@
 package com.kota201.jtk.pkl;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,7 +9,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -34,7 +34,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -46,6 +45,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterItem;
@@ -53,9 +53,11 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 import com.kota201.jtk.pkl.model.Dagangan;
-import com.kota201.jtk.pkl.restful.GetImageMethod;
 import com.kota201.jtk.pkl.restful.GetMethod;
 import com.kota201.jtk.pkl.service.NetworkChangeReceiver;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.willy.ratingbar.ScaleRatingBar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -75,18 +77,24 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
         OnMapReadyCallback,
         LocationListener,
         ActivityCompat.OnRequestPermissionsResultCallback,
-        ClusterManager.OnClusterClickListener<Dagangan>{
+        ClusterManager.OnClusterClickListener<Dagangan>,
+        ClusterManager.OnClusterInfoWindowClickListener<Dagangan>,
+        ClusterManager.OnClusterItemClickListener<Dagangan>,
+        ClusterManager.OnClusterItemInfoWindowClickListener<Dagangan>{
 
-    @BindView(R.id.toolbar) Toolbar toolbar;
-    @BindView(R.id.drawer_layout) DrawerLayout drawer;
-    @BindView(R.id.nav_view) NavigationView navigationView;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout drawer;
+    @BindView(R.id.nav_view)
+    NavigationView navigationView;
 
     private MenuItem searchItem;
     private SearchRecentSuggestions suggestions;
     private SearchView searchView;
     private LocationManager locationManager;
     private GoogleMap mMap;
-    private int filter=0;
+    private int filter = 1;
     private static final long MIN_TIME = 400;
     private static final float MIN_DISTANCE = 1000;
     private boolean mPermissionDenied = false;
@@ -97,6 +105,10 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
     private Handler handler;
     private Runnable runnable;
     private BroadcastReceiver mNetworkReceiver;
+    ProgressDialog progressDialog;
+    private Dagangan clickedClusterItem;
+    private ImageLoader imageLoader;
+
     static {
         AndroidLoggerFactory.configureDefaultLogger(LokasiPedagangActivity.class.getPackage());
         log = LoggerFactory.getLogger(LokasiPedagangActivity.class);
@@ -187,6 +199,10 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        //image loader
+        imageLoader = ImageLoader.getInstance();
+        imageLoader.init(new ImageLoaderConfiguration.Builder(this).build());
     }
 
     //-------------------- START Navigation --------------------//
@@ -202,7 +218,7 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
             startActivity(new Intent(LokasiPedagangActivity.this, LoginActivity.class));
         } else if (id == R.id.nav_registrasi) {
             startActivity(new Intent(LokasiPedagangActivity.this, SignupActivity.class));
-        } else if (id == R.id.nav_tentang){
+        } else if (id == R.id.nav_tentang) {
 
         }
 
@@ -236,12 +252,12 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
         mClusterManager = new ClusterManager<Dagangan>(this, mMap);
         mClusterManager.setRenderer(new DaganganRenderer());
         final CameraPosition[] mPreviousCameraPosition = {null};
-        mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener(){
+        mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
             @Override
-            public void onCameraIdle(){
+            public void onCameraIdle() {
 
                 CameraPosition position = mMap.getCameraPosition();
-                if(mPreviousCameraPosition[0] == null || mPreviousCameraPosition[0].zoom !=position.zoom){
+                if (mPreviousCameraPosition[0] == null || mPreviousCameraPosition[0].zoom != position.zoom) {
                     mPreviousCameraPosition[0] = mMap.getCameraPosition();
                     mClusterManager.cluster();
                 }
@@ -249,21 +265,36 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
         });
         mMap.setOnMarkerClickListener(mClusterManager);
         mMap.setOnInfoWindowClickListener(mClusterManager);
+        mMap.setInfoWindowAdapter(mClusterManager.getMarkerManager());
         mClusterManager.setOnClusterClickListener(this);
+        mClusterManager.setOnClusterInfoWindowClickListener(this);
+        mClusterManager.setOnClusterItemClickListener(this);
+        mClusterManager.setOnClusterItemInfoWindowClickListener(this);
+
+        mClusterManager
+                .setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<Dagangan>() {
+                    @Override
+                    public boolean onClusterItemClick(Dagangan dagangan) {
+                        clickedClusterItem = dagangan;
+                        return false;
+                    }
+                });
+
         handler = new Handler();
         runnable = new Runnable() {
             @Override
             public void run() {
                 // TODO Auto-generated method stub
-                if(NetworkChangeReceiver.isNetworkAvailable(getBaseContext())){
+                if (NetworkChangeReceiver.isNetworkAvailable(getBaseContext())) {
                     mClusterManager.clearItems();
                     addItems();
+                    mClusterManager.getMarkerCollection().setOnInfoWindowAdapter(
+                            new MyCustomAdapterForItems());
                     mClusterManager.cluster();
                 }
-                handler.postDelayed(this, 5000);
             }
         };
-        handler.postDelayed(runnable, 5000);
+        handler.postDelayed(runnable, 10000);
     }
 
     //-------------------- START Permission Access Fine Location --------------------//
@@ -336,7 +367,58 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
     public void onProviderDisabled(String s) {
 
     }
+
+    @Override
+    public void onClusterInfoWindowClick(Cluster<Dagangan> cluster) {
+
+    }
+
+    @Override
+    public boolean onClusterItemClick(Dagangan dagangan) {
+        return false;
+    }
+
+    @Override
+    public void onClusterItemInfoWindowClick(Dagangan dagangan) {
+
+    }
     //-------------------- END Permission Access Fine Location --------------------//
+
+    public class MyCustomAdapterForItems implements GoogleMap.InfoWindowAdapter {
+
+        private final View myContentsView;
+
+        MyCustomAdapterForItems() {
+            myContentsView = getLayoutInflater().inflate(
+                    R.layout.info_window, null);
+        }
+
+        @Override
+        public View getInfoContents(Marker marker) {
+            return null;
+        }
+
+        @Override
+        public View getInfoWindow(Marker marker) {
+            // TODO Auto-generated method stub
+
+            TextView mNamaDagangan = (TextView) myContentsView.findViewById(R.id.namaDagangan);
+            ScaleRatingBar mNilaiPenilaian = (ScaleRatingBar) myContentsView.findViewById(R.id.nilaiPenilaian);
+            TextView mJumlahPenilaian = (TextView) myContentsView.findViewById(R.id.jumlahPenilaian);
+            ImageView mFotoDagangan = (ImageView) myContentsView.findViewById(R.id.fotoDagangan);
+
+            if (clickedClusterItem != null) {
+                mNamaDagangan.setText(clickedClusterItem.getNamaDagangan());
+                mNilaiPenilaian.setRating(clickedClusterItem.getMeanPenilaianDagangan());
+                mNilaiPenilaian.setNumStars(5);
+                mNilaiPenilaian.setTouchable(false);
+                mJumlahPenilaian.setText("("+ clickedClusterItem.getCountPenilaianDagangan()+")");
+                imageLoader.displayImage("http://carmate.id/assets/image/" + clickedClusterItem.getFotoDagangan(), mFotoDagangan);
+            }
+            myContentsView.setBackgroundResource(R.drawable.rounded_corner);
+            return myContentsView;
+        }
+    }
 
     //-------------------- START Marker Cluster --------------------//
     private class DaganganRenderer extends DefaultClusterRenderer<Dagangan> {
@@ -368,51 +450,33 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
             mSingleStar = (ImageView) singleProfile.findViewById(R.id.star);
             mSingleFrame = (FrameLayout) singleProfile.findViewById(R.id.frame);
             mSingleIcon = (ImageView) singleProfile.findViewById(R.id.icon);
-
             mDimension = (int) getResources().getDimension(R.dimen.custom_profile_image);
         }
 
         @Override
-        protected void onBeforeClusterItemRendered(Dagangan dagangan, MarkerOptions markerOptions) {
+        protected void onBeforeClusterItemRendered(final Dagangan dagangan, MarkerOptions markerOptions) {
+            imageLoader.displayImage("http://carmate.id/assets/image/" + dagangan.getFotoDagangan(), mSingleImageView);
+            if (dagangan.getStatusRecommendation() == Boolean.FALSE)
+                mSingleStar.setVisibility(View.INVISIBLE);
+            else mSingleStar.setVisibility(View.VISIBLE);
 
-                // Set the info window to show their name.
-                GetImageMethod getImageMethod = new GetImageMethod();
-
-                byte[] image = new byte[0];
-                try{
-                    image = getImageMethod.execute("http://carmate.id/assets/image/"+dagangan.getFotoDagangan()+".jpg").get();
-                    if (image != null && image.length > 0){
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
-                        mSingleImageView.setImageBitmap(bitmap);
-                    }
-
-                    if (dagangan.getStatusRecommendation() == Boolean.FALSE)
-                        mSingleStar.setVisibility(View.INVISIBLE);
-                    else mSingleStar.setVisibility(View.VISIBLE);
-
-                    if ( dagangan.getTipeDagangan() == Boolean.FALSE){
-                        mSingleIcon.setImageResource(R.drawable.icon_diam);
-                        if (dagangan.getStatusBerjualan() == Boolean.TRUE)
-                            mSingleFrame.setBackgroundResource(R.color.colorOnline);
-                        else mSingleFrame.setBackgroundResource(R.color.colorOffline);
-                    }else{
-                        mSingleIcon.setImageResource(R.drawable.icon_berjalan);
-                        mSingleFrame.setBackgroundResource(R.color.colorOnline);
-                    }
-
-
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-
-                Bitmap icon = mIconGenerator.makeIcon();
-                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(dagangan.getNamaDagangan());
+            if (dagangan.getTipeDagangan() == Boolean.FALSE) {
+                imageLoader.displayImage("drawable://" + R.drawable.icon_diam, mSingleIcon);
+                if (dagangan.getStatusBerjualan() == Boolean.TRUE)
+                    mSingleFrame.setBackgroundResource(R.color.colorOnline);
+                else mSingleFrame.setBackgroundResource(R.color.colorOffline);
+            } else {
+                imageLoader.displayImage("drawable://" + R.drawable.icon_berjalan, mSingleIcon);
+                mSingleFrame.setBackgroundResource(R.color.colorOnline);
+            }
+            Bitmap icon = mIconGenerator.makeIcon();
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
 
         }
 
         @Override
         protected void onBeforeClusterRendered(Cluster<Dagangan> cluster, MarkerOptions markerOptions) {
-            int i=0;
+            int i = 0;
             mClusterStar.setVisibility(View.INVISIBLE);
             for (Dagangan p : cluster.getItems()) {
                 if (p.getStatusRecommendation() == Boolean.TRUE)
@@ -434,10 +498,6 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
 
     @Override
     public boolean onClusterClick(Cluster<Dagangan> cluster) {
-        // Show a toast with some info when the cluster is clicked.
-        String firstName = cluster.getItems().iterator().next().getNamaDagangan();
-        Toast.makeText(this, cluster.getSize() + " (including " + firstName + ")", Toast.LENGTH_SHORT).show();
-
         // Zoom in the cluster. Need to create LatLngBounds and including all the cluster items
         // inside of bounds, then animate to center of the bounds.
 
@@ -463,14 +523,14 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
         ArrayList<Dagangan> listDagangan = new ArrayList<>();
         listDagangan = getDaganganLocation();
 
-        for (Dagangan dagangan: listDagangan) {
-            if(dagangan.getTipeDagangan() == Boolean.FALSE){
+        for (Dagangan dagangan : listDagangan) {
+            if (dagangan.getTipeDagangan() == Boolean.FALSE) {
                 if (dagangan.getStatusBerjualan() == Boolean.TRUE)
                     mClusterManager.addItem(dagangan);
-                else{
+                else {
                     mClusterManager.addItem(dagangan);
                 }
-            } else{
+            } else {
                 if (dagangan.getStatusBerjualan() == Boolean.TRUE)
                     mClusterManager.addItem(dagangan);
             }
@@ -478,46 +538,46 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
         }
     }
 
-    public ArrayList<Dagangan> getDaganganLocation(){
+    public ArrayList<Dagangan> getDaganganLocation() {
         ArrayList<Dagangan> listDagangan = new ArrayList<>();
 
-            GetMethod getMethod = (GetMethod) new GetMethod().execute(
-                    "http://carmate.id/index.php/Dagangan_controller/getAllDaganganLocation");
-            String jsonData = null;
-            JSONArray Jobject = null;
+        GetMethod getMethod = (GetMethod) new GetMethod().execute(
+                "http://carmate.id/index.php/Dagangan_controller/getAllDaganganLocation");
+        String jsonData = null;
+        JSONArray Jobject = null;
 
+        try {
+            jsonData = getMethod.get();
+            Jobject = new JSONArray(jsonData);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        for (int i = 0; i < Jobject.length(); i++) {
+            JSONObject c = null;
+            Dagangan dagangan = new Dagangan();
             try {
-                jsonData = getMethod.get();
-                Jobject = new JSONArray(jsonData);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
+                c = Jobject.getJSONObject(i);
+                dagangan.setIdDagangan(c.getString("idDagangan"));
+                dagangan.setNamaDagangan(c.getString("namaDagangan"));
+                dagangan.setFotoDagangan(c.getString("fotoDagangan"));
+                dagangan.setLatDagangan(c.getDouble("latDagangan"));
+                dagangan.setLngDagangan(c.getDouble("lngDagangan"));
+                dagangan.setMeanPenilaianDagangan((int) c.getDouble("meanPenilaianDagangan"));
+                dagangan.setCountPenilaianDagangan(c.getInt("countPenilaianDagangan"));
+                dagangan.setStatusRecommendation(c.getBoolean("statusRecommendation"));
+                dagangan.setStatusBerjualan(c.getBoolean("statusBerjualan"));
+                dagangan.setTipeDagangan(c.getBoolean("tipeDagangan"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-
-            for (int i = 0; i < Jobject.length(); i++) {
-                JSONObject c = null;
-                Dagangan dagangan = new Dagangan();
-                try {
-                    c = Jobject.getJSONObject(i);
-                    dagangan.setIdDagangan(c.getString("idDagangan"));
-                    dagangan.setNamaDagangan(c.getString("namaDagangan"));
-                    dagangan.setFotoDagangan(c.getString("fotoDagangan"));
-                    dagangan.setLatDagangan(c.getDouble("latDagangan"));
-                    dagangan.setLngDagangan(c.getDouble("lngDagangan"));
-                    dagangan.setMeanPenilaianDagangan(c.getDouble("meanPenilaianDagangan"));
-                    dagangan.setCountPenilaianDagangan(c.getInt("countPenilaianDagangan"));
-                    dagangan.setStatusRecommendation(c.getBoolean("statusRecommendation"));
-                    dagangan.setStatusBerjualan(c.getBoolean("statusBerjualan"));
-                    dagangan.setTipeDagangan(c.getBoolean("tipeDagangan"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                listDagangan.add(dagangan);
-            }
+            listDagangan.add(dagangan);
+        }
 
 
         return listDagangan;
@@ -551,15 +611,12 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
         log.warn("onNewIntent() :{}", intent);
         showSearch(false);
         Bundle extras = intent.getExtras();
-        String userQuery = String.valueOf(extras.get(SearchManager.USER_QUERY));
         String query = String.valueOf(extras.get(SearchManager.QUERY));
+        suggestions.saveRecentQuery(query, "");
 
-        log.debug("query: {} user_query: {}", query, userQuery);
-        suggestions.saveRecentQuery(query,"");
-        intent = new Intent(getBaseContext(), ResultSearchActivity.class);
+        intent = new Intent(LokasiPedagangActivity.this, ResultSearchActivity.class);
         intent.putExtra("query", query);
-        intent.putExtra("userQuery", userQuery);
-        intent.putExtra("filter",filter);
+        intent.putExtra("filter", filter);
         startActivity(intent);
     }
 
@@ -588,24 +645,25 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
             case R.id.radioBtnDagangan:
                 if (item.isChecked()) item.setChecked(false);
                 else item.setChecked(true);
-                filter = 0;
-                Log.i("filter","Dagangan");
+                filter = 1;
+                Log.i("filter", "Dagangan");
                 return true;
             case R.id.radioBtnProduk:
                 if (item.isChecked()) item.setChecked(false);
                 else item.setChecked(true);
-                filter = 1;
-                Log.i("filter","Produk");
+                filter = 2;
+                Log.i("filter", "Produk");
                 return true;
             case R.id.radioBtnPedagang:
                 if (item.isChecked()) item.setChecked(false);
                 else item.setChecked(true);
-                filter = 2;
-                Log.i("filter","Pedagang");
+                filter = 3;
+                Log.i("filter", "Pedagang");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
     //-------------------- END Search --------------------//
+
 }

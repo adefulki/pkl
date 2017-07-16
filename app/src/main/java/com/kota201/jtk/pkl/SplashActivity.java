@@ -1,12 +1,8 @@
 package com.kota201.jtk.pkl;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -48,30 +44,4 @@ public class SplashActivity extends Activity{
                     }
                 }, SPLASH_TIME_OUT);
     }
-
-    private boolean isNetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        return cm.getActiveNetworkInfo() != null;
-    }
-
-    public void createDialog() {
-        AlertDialog.Builder errorDialog = new AlertDialog.Builder(this);
-        errorDialog.setTitle("Error");
-        errorDialog.setMessage("No internet connection.");
-        errorDialog.setNeutralButton("OK",
-                new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        android.os.Process.killProcess(android.os.Process.myPid());
-                        System.exit(1);
-                        dialog.dismiss();
-                    }
-                });
-
-        errorDialog.create();
-    }
-
-
 }

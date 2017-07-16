@@ -3,7 +3,6 @@ package com.kota201.jtk.pkl;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -57,24 +56,6 @@ public class SignupActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (isNetworkConnected() == true) {
-            SharedPreferences prefs = getSharedPreferences(my_prefs, MODE_PRIVATE);
-            String restoredText = prefs.getString("text", null);
-            if (restoredText != null) {
-                int role = prefs.getInt("role", 0);
-                if (role == 0){
-                    //tampilan pedagang
-                }else if (role == 1){
-                    //tampilan pembeli
-                }
-            }
-        }else{
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.addCategory(Intent.CATEGORY_HOME);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        }
 
         setContentView(R.layout.signup);
         ButterKnife.bind(this);
