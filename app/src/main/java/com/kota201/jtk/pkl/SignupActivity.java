@@ -1,9 +1,7 @@
 package com.kota201.jtk.pkl;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -18,8 +16,6 @@ import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.kota201.jtk.pkl.service.NetworkChangeReceiver;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -96,12 +92,6 @@ public class SignupActivity extends AppCompatActivity {
         radioBtnPedagang.setChecked(true);
     }
 
-    private boolean isNetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        return cm.getActiveNetworkInfo() != null;
-    }
-
     public void signup() {
         Log.d(TAG, "Registrasi");
 
@@ -134,7 +124,15 @@ public class SignupActivity extends AppCompatActivity {
 
     public void onSignupSuccess() {
         btnSignup.setEnabled(true);
-        //finish();
+        Intent i = new Intent(getApplicationContext(), VerifikasiActivity.class);
+        i.putExtra("noPonsel",inputNoPonsel.getText().toString());
+        if(radioBtnPedagang.isChecked()){
+            i.putExtra("role",1);
+        }else if(radioBtnPembeli.isChecked()){
+            i.putExtra("role",2);
+        }
+        startActivity(i);
+        finish();
     }
 
     public void onSignupFailed() {
@@ -224,14 +222,12 @@ public class SignupActivity extends AppCompatActivity {
                 return false;
             }
 
-            if(!NetworkChangeReceiver.isNetworkAvailable(getBaseContext()))
-                return false;
-
             JSONObject dataToSend = null;
             try {
                 dataToSend = new JSONObject()
                         .put("noPonselPembeli", mNoPonsel)
                         .put("passwordPembeli", mPassword);
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }

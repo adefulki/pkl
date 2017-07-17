@@ -63,7 +63,8 @@
             android:layout_marginBottom="24dp"
             android:padding="12dp"
             android:text="Login"
-            android:textColor="@color/colorAccent"/>
+            android:textColor="@color/colorAccent"
+            android:backgroundTint="@color/colorPrimaryDark"/>
 
         <TextView android:id="@+id/linkSignup"
             android:layout_width="fill_parent"

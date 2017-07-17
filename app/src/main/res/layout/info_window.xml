@@ -20,31 +20,29 @@
         android:layout_marginRight="10dp"
         android:textColor="@color/colorAccent"
         android:textAppearance="?attr/textAppearanceListItem"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:text="Nama Dagangan"
         android:layout_toRightOf="@+id/fotoDagangan"
         android:layout_alignTop="@+id/fotoDagangan"/>
 
-    <com.willy.ratingbar.ScaleRatingBar
-        xmlns:rb="http://schemas.android.com/apk/res-auto"
+    <RatingBar
         android:id="@+id/nilaiPenilaian"
+        android:layout_height="17dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        rb:numStars="5"
-        rb:rating="2"
-        rb:starPadding="4"
-        rb:touchable="true"
-        rb:drawableEmpty="@drawable/ic_star_disable"
-        rb:drawableFilled="@drawable/ic_star_enable"
+        android:numStars="5"
+        android:rating="3.5"
+        android:isIndicator="false"
+        style="@style/ratingBar"
         android:layout_toRightOf="@+id/fotoDagangan"
         android:layout_alignBottom="@+id/fotoDagangan">
-    </com.willy.ratingbar.ScaleRatingBar>
+    </RatingBar>
 
     <TextView
         android:id="@+id/jumlahPenilaian"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="10dp"
+        android:layout_marginLeft="5dp"
         android:text="(20)"
         android:layout_alignBottom="@+id/nilaiPenilaian"
         android:layout_toEndOf="@+id/nilaiPenilaian"

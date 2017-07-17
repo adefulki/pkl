@@ -13,6 +13,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.SearchRecentSuggestions;
@@ -31,8 +32,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -53,11 +55,14 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 import com.kota201.jtk.pkl.model.Dagangan;
-import com.kota201.jtk.pkl.restful.GetMethod;
 import com.kota201.jtk.pkl.service.NetworkChangeReceiver;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.willy.ratingbar.ScaleRatingBar;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
+import com.nostra13.universalimageloader.utils.L;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -65,12 +70,16 @@ import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.slf4j.impl.AndroidLoggerFactory;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class LokasiPedagangActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
@@ -203,6 +212,7 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
         //image loader
         imageLoader = ImageLoader.getInstance();
         imageLoader.init(new ImageLoaderConfiguration.Builder(this).build());
+        L.disableLogging();
     }
 
     //-------------------- START Navigation --------------------//
@@ -270,7 +280,6 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
         mClusterManager.setOnClusterInfoWindowClickListener(this);
         mClusterManager.setOnClusterItemClickListener(this);
         mClusterManager.setOnClusterItemInfoWindowClickListener(this);
-
         mClusterManager
                 .setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<Dagangan>() {
                     @Override
@@ -286,15 +295,19 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
             public void run() {
                 // TODO Auto-generated method stub
                 if (NetworkChangeReceiver.isNetworkAvailable(getBaseContext())) {
-                    mClusterManager.clearItems();
-                    addItems();
+                    try {
+                        new getDagangan().execute().get();
+                    } catch (InterruptedException | ExecutionException e) {
+                        e.printStackTrace();
+                    }
                     mClusterManager.getMarkerCollection().setOnInfoWindowAdapter(
                             new MyCustomAdapterForItems());
                     mClusterManager.cluster();
                 }
+                handler.postDelayed(runnable, 10000);
             }
         };
-        handler.postDelayed(runnable, 10000);
+        handler.post(runnable);
     }
 
     //-------------------- START Permission Access Fine Location --------------------//
@@ -403,17 +416,49 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
             // TODO Auto-generated method stub
 
             TextView mNamaDagangan = (TextView) myContentsView.findViewById(R.id.namaDagangan);
-            ScaleRatingBar mNilaiPenilaian = (ScaleRatingBar) myContentsView.findViewById(R.id.nilaiPenilaian);
+            RatingBar mNilaiPenilaian = (RatingBar) myContentsView.findViewById(R.id.nilaiPenilaian);
             TextView mJumlahPenilaian = (TextView) myContentsView.findViewById(R.id.jumlahPenilaian);
-            ImageView mFotoDagangan = (ImageView) myContentsView.findViewById(R.id.fotoDagangan);
+            final ImageView mFotoDagangan = (ImageView) myContentsView.findViewById(R.id.fotoDagangan);
 
             if (clickedClusterItem != null) {
                 mNamaDagangan.setText(clickedClusterItem.getNamaDagangan());
                 mNilaiPenilaian.setRating(clickedClusterItem.getMeanPenilaianDagangan());
-                mNilaiPenilaian.setNumStars(5);
-                mNilaiPenilaian.setTouchable(false);
                 mJumlahPenilaian.setText("("+ clickedClusterItem.getCountPenilaianDagangan()+")");
-                imageLoader.displayImage("http://carmate.id/assets/image/" + clickedClusterItem.getFotoDagangan(), mFotoDagangan);
+                DisplayImageOptions options = new DisplayImageOptions.Builder()
+                        .showImageOnLoading(R.drawable.default3)
+                        .showImageForEmptyUri(R.drawable.default3)
+                        .showImageOnFail(R.drawable.default3)
+                        .cacheInMemory(true)
+                        .cacheOnDisk(true)
+                        .considerExifParams(true)
+                        .build();
+                imageLoader.displayImage("http://carmate.id/assets/image/" + clickedClusterItem.getFotoDagangan(), mFotoDagangan, options, new ImageLoadingListener() {
+
+                    @Override
+                    public void onLoadingStarted(String imageUri, View view) {
+
+                    }
+
+                    @Override
+                    public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+
+                    }
+
+                    @Override
+                    public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                        mFotoDagangan.setImageBitmap(loadedImage);
+                    }
+
+                    @Override
+                    public void onLoadingCancelled(String imageUri, View view) {
+
+                    }
+                }, new ImageLoadingProgressListener() {
+                    @Override
+                    public void onProgressUpdate(String imageUri, View view, int current, int total) {
+
+                    }
+                });
             }
             myContentsView.setBackgroundResource(R.drawable.rounded_corner);
             return myContentsView;
@@ -427,7 +472,7 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
         private final ImageView mSingleImageView;
         private final ImageView mSingleStar;
         private final ImageView mSingleIcon;
-        private final FrameLayout mSingleFrame;
+        private final RelativeLayout mSingleFrame;
 
 
         private final ImageView mClusterImageView;
@@ -448,17 +493,53 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
             mIconGenerator.setContentView(singleProfile);
             mSingleImageView = (ImageView) singleProfile.findViewById(R.id.image);
             mSingleStar = (ImageView) singleProfile.findViewById(R.id.star);
-            mSingleFrame = (FrameLayout) singleProfile.findViewById(R.id.frame);
+            mSingleFrame = (RelativeLayout) singleProfile.findViewById(R.id.frame);
             mSingleIcon = (ImageView) singleProfile.findViewById(R.id.icon);
             mDimension = (int) getResources().getDimension(R.dimen.custom_profile_image);
         }
 
         @Override
         protected void onBeforeClusterItemRendered(final Dagangan dagangan, MarkerOptions markerOptions) {
+            DisplayImageOptions options = new DisplayImageOptions.Builder()
+                    .showImageOnLoading(R.drawable.default3)
+                    .showImageForEmptyUri(R.drawable.default3)
+                    .showImageOnFail(R.drawable.default3)
+                    .cacheInMemory(true)
+                    .cacheOnDisk(true)
+                    .considerExifParams(true)
+                    .build();
+            imageLoader.displayImage("http://carmate.id/assets/image/" + dagangan.getFotoDagangan(), mSingleImageView, options, new ImageLoadingListener() {
+
+                @Override
+                public void onLoadingStarted(String imageUri, View view) {
+
+                }
+
+                @Override
+                public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+
+                }
+
+                @Override
+                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                    mSingleImageView.setImageBitmap(loadedImage);
+                }
+
+                @Override
+                public void onLoadingCancelled(String imageUri, View view) {
+
+                }
+            }, new ImageLoadingProgressListener() {
+                @Override
+                public void onProgressUpdate(String imageUri, View view, int current, int total) {
+
+                }
+            });
+
             imageLoader.displayImage("http://carmate.id/assets/image/" + dagangan.getFotoDagangan(), mSingleImageView);
-            if (dagangan.getStatusRecommendation() == Boolean.FALSE)
-                mSingleStar.setVisibility(View.INVISIBLE);
-            else mSingleStar.setVisibility(View.VISIBLE);
+            mSingleStar.setVisibility(View.INVISIBLE);
+            if (dagangan.getStatusRecommendation() == Boolean.TRUE)
+                mSingleStar.setVisibility(View.VISIBLE);
 
             if (dagangan.getTipeDagangan() == Boolean.FALSE) {
                 imageLoader.displayImage("drawable://" + R.drawable.icon_diam, mSingleIcon);
@@ -519,68 +600,66 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
         return true;
     }
 
-    private void addItems() {
-        ArrayList<Dagangan> listDagangan = new ArrayList<>();
-        listDagangan = getDaganganLocation();
+    public class getDagangan extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            mClusterManager.clearItems();
+            ArrayList<Dagangan> listDagangan = new ArrayList<>();
+            OkHttpClient client = new OkHttpClient();
 
-        for (Dagangan dagangan : listDagangan) {
-            if (dagangan.getTipeDagangan() == Boolean.FALSE) {
-                if (dagangan.getStatusBerjualan() == Boolean.TRUE)
-                    mClusterManager.addItem(dagangan);
-                else {
-                    mClusterManager.addItem(dagangan);
-                }
-            } else {
-                if (dagangan.getStatusBerjualan() == Boolean.TRUE)
-                    mClusterManager.addItem(dagangan);
-            }
+            Request.Builder builder = new Request.Builder();
+            builder.url("http://carmate.id/index.php/Dagangan_controller/getAllDaganganLocation");
+            Request request = builder.build();
 
-        }
-    }
+            String jsonData = null;
+            JSONArray Jobject = null;
 
-    public ArrayList<Dagangan> getDaganganLocation() {
-        ArrayList<Dagangan> listDagangan = new ArrayList<>();
-
-        GetMethod getMethod = (GetMethod) new GetMethod().execute(
-                "http://carmate.id/index.php/Dagangan_controller/getAllDaganganLocation");
-        String jsonData = null;
-        JSONArray Jobject = null;
-
-        try {
-            jsonData = getMethod.get();
-            Jobject = new JSONArray(jsonData);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
-        for (int i = 0; i < Jobject.length(); i++) {
-            JSONObject c = null;
-            Dagangan dagangan = new Dagangan();
             try {
-                c = Jobject.getJSONObject(i);
-                dagangan.setIdDagangan(c.getString("idDagangan"));
-                dagangan.setNamaDagangan(c.getString("namaDagangan"));
-                dagangan.setFotoDagangan(c.getString("fotoDagangan"));
-                dagangan.setLatDagangan(c.getDouble("latDagangan"));
-                dagangan.setLngDagangan(c.getDouble("lngDagangan"));
-                dagangan.setMeanPenilaianDagangan((int) c.getDouble("meanPenilaianDagangan"));
-                dagangan.setCountPenilaianDagangan(c.getInt("countPenilaianDagangan"));
-                dagangan.setStatusRecommendation(c.getBoolean("statusRecommendation"));
-                dagangan.setStatusBerjualan(c.getBoolean("statusBerjualan"));
-                dagangan.setTipeDagangan(c.getBoolean("tipeDagangan"));
+                Response response = client.newCall(request).execute();
+                jsonData = response.body().string();
+                Jobject = new JSONArray(jsonData);
             } catch (JSONException e) {
                 e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            listDagangan.add(dagangan);
+
+            for (int i = 0; i < Jobject.length(); i++) {
+                JSONObject c = null;
+                Dagangan dagangan = new Dagangan();
+                try {
+                    c = Jobject.getJSONObject(i);
+                    dagangan.setIdDagangan(c.getString("idDagangan"));
+                    dagangan.setNamaDagangan(c.getString("namaDagangan"));
+                    dagangan.setFotoDagangan(c.getString("fotoDagangan"));
+                    dagangan.setLatDagangan(c.getDouble("latDagangan"));
+                    dagangan.setLngDagangan(c.getDouble("lngDagangan"));
+                    dagangan.setMeanPenilaianDagangan((int) c.getDouble("meanPenilaianDagangan"));
+                    dagangan.setCountPenilaianDagangan(c.getInt("countPenilaianDagangan"));
+                    dagangan.setStatusRecommendation(c.getBoolean("statusRecommendation"));
+                    dagangan.setStatusBerjualan(c.getBoolean("statusBerjualan"));
+                    dagangan.setTipeDagangan(c.getBoolean("tipeDagangan"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                listDagangan.add(dagangan);
+            }
+
+            for (Dagangan dagangan : listDagangan) {
+                if (dagangan.getTipeDagangan() == Boolean.FALSE) {
+                    if (dagangan.getStatusBerjualan() == Boolean.TRUE)
+                        mClusterManager.addItem(dagangan);
+                    else {
+                        mClusterManager.addItem(dagangan);
+                    }
+                } else {
+                    if (dagangan.getStatusBerjualan() == Boolean.TRUE)
+                        mClusterManager.addItem(dagangan);
+                }
+
+            }
+            return null;
         }
-
-
-        return listDagangan;
     }
     //-------------------- END Marker Cluster --------------------//
 

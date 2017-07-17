@@ -50,8 +50,8 @@ dependencies {
     //Smarty Toast
     compile 'com.github.amanjeetsingh150:SmartyToast:1.0'
 
-    //Simple Rating Bar
-    compile 'com.github.ome450901:SimpleRatingBar:1.2'
+    //Pin Entry Edit Text
+    compile 'com.alimuzaffar.lib:pinentryedittext:1.3.1'
 
     //Picasso
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'

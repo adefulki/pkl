@@ -1,6 +1,7 @@
 package com.kota201.jtk.pkl;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.kota201.jtk.pkl.model.Search;
-import com.kota201.jtk.pkl.restful.PostMethod;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
@@ -19,6 +19,12 @@ import org.json.JSONObject;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Created by AdeFulki on 7/14/2017.
@@ -104,7 +110,7 @@ public class ResultAdapter extends  RecyclerView.Adapter<ResultViewHolder>{
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        PostMethod postMethod = (PostMethod) new PostMethod().execute(
+        searching postMethod = (searching) new searching().execute(
                 "http://carmate.id/index.php/Pencarian_controller/searchKataKunci",
                 mJsonObj.toString()
                 );
@@ -131,6 +137,31 @@ public class ResultAdapter extends  RecyclerView.Adapter<ResultViewHolder>{
                 e.printStackTrace();
             }
             listSearch.add(search);
+        }
+    }
+
+    public class searching extends AsyncTask<String, Void, String> {
+
+        OkHttpClient client = new OkHttpClient();
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
+            //Create request object
+            Request request = new Request.Builder()
+                    .url(params[0])
+                    .post(RequestBody.create(JSON, params[1]))
+                    .build();
+
+            try {
+                Response response = client.newCall(request).execute();
+                return response.body().string();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return null;
         }
     }
 }

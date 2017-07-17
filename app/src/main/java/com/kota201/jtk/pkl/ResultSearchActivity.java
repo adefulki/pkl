@@ -10,8 +10,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 
 import com.kota201.jtk.pkl.model.Search;
 
@@ -20,7 +20,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -29,8 +28,6 @@ import butterknife.ButterKnife;
 
 
 public class ResultSearchActivity extends AppCompatActivity{
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
     ArrayList<Search> listSearch = new ArrayList<>();
 
     private String query;
@@ -43,9 +40,9 @@ public class ResultSearchActivity extends AppCompatActivity{
 
         ButterKnife.bind(this);
 
-        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle("Hasil Pencarian");
 
         recyclerView= (RecyclerView) findViewById(R.id.recycler_view);
 
@@ -96,7 +93,14 @@ public class ResultSearchActivity extends AppCompatActivity{
 
     @Override
     public void onBackPressed() {
-
         super.onBackPressed();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        if (menuItem.getItemId() == android.R.id.home) {
+            onBackPressed();
+        }
+        return super.onOptionsItemSelected(menuItem);
     }
 }

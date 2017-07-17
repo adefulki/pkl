@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorPrimary">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="35dp"
+        android:text="6 digit Kode akses telah dikirimkan melalui pesan kepada nomor ponsel +62*******"
+        android:textColor="@color/colorAccent"
+        android:layout_marginLeft="100dp"
+        android:textAlignment="center"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="100dp"
+        android:text="Masukan Kode Akses yang Anda dapat untuk validasi nomor ponsel Anda"
+        android:textAlignment="center"
+        android:textColor="@color/colorAccent"
+        android:layout_marginTop="48dp"
+        android:layout_below="@+id/btnKirimUlang"
+        android:layout_centerHorizontal="true" />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btnKirimUlang"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Kirim Ulang"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:backgroundTint="@color/colorPrimary"/>
+
+    <com.alimuzaffar.lib.pin.PinEntryEditText
+        android:id="@+id/kodeAkses"
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:cursorVisible="false"
+        app:pinLineColors="@color/colorAccent"
+        app:pinBackgroundIsSquare="true"
+        app:pinLineStrokeSelected="2dp"
+        app:pinLineStroke="1dp"
+        android:textSize="50sp"
+        android:textColor="@color/colorPrimaryDarker"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_below="@+id/textView2"
+        android:layout_centerHorizontal="true"
+        app:pinAnimationType="none"/>
+    <Button
+        android:id="@+id/btnCekKodeAkses"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="26dp"
+        android:text="Cek kode akses"
+        android:textColor="@color/colorAccent"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:layout_below="@+id/kodeAkses"
+        android:layout_centerHorizontal="true" />
+</RelativeLayout>
