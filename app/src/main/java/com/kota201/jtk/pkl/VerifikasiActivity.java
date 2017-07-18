@@ -1,6 +1,8 @@
 package com.kota201.jtk.pkl;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -50,10 +52,11 @@ public class VerifikasiActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            noPonsel = extras.getString("noPonsel");
-            role = extras.getInt("role");
+        SharedPreferences prefs = getSharedPreferences(String.valueOf(R.string.my_prefs), MODE_PRIVATE);
+        String restoredText = prefs.getString("text", null);
+        if (restoredText != null) {
+            noPonsel = prefs.getString("noPonsel", "No name defined");
+            role = prefs.getInt("role", 0);
         }
 
         textView.setText("4 digit Kode Akses telah dikirimkan melalui SMS kepada nomor ponsel "+noPonsel+". Jika terjadi kesalahan Anda dapat meminta untuk mengirim ulang Kode Akses Anda");
@@ -127,7 +130,7 @@ public class VerifikasiActivity extends AppCompatActivity {
                 JSONObject jObj = new JSONObject(postMethod.get());
                 statusValid = jObj.getBoolean("statusValid");
                 if (statusValid){
-
+                    startActivity(new Intent(VerifikasiActivity.this, SettingAwalPembeliActivity.class));
                 }else{
                     SmartyToast.makeText(getApplicationContext(),"Kode Akses salah",SmartyToast.LENGTH_SHORT,SmartyToast.ERROR);
                     mKodeAkses.setText(null);

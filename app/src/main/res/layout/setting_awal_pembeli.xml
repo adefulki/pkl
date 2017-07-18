@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/namaPembeli"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="31dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Nama"
+        android:textColor="@color/colorAccent"
+        android:textColorHint="@color/colorPrimaryDarker"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="80dp"
+        android:layout_marginBottom="10dp"/>
+
+    <EditText
+        android:id="@+id/alamatPembeli"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Alamat"
+        android:maxLines="2"
+        android:textColor="@color/colorAccent"
+        android:textColorHint="@color/colorPrimaryDarker"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/namaPembeli"
+        android:layout_alignEnd="@+id/namaPembeli"
+        android:layout_alignStart="@+id/namaPembeli"
+        android:layout_marginBottom="10dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Foto profil"
+        android:textColor="@color/colorAccent"
+        android:id="@+id/textView"
+        android:textSize="18sp"
+        android:layout_below="@+id/alamatPembeli"
+        android:layout_alignStart="@+id/alamatPembeli"
+        android:layout_marginBottom="5dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tekan gambar untuk memilih foto"
+        android:textColor="@color/colorAccent"
+        android:id="@+id/textView2"
+        android:textSize="12sp"
+        android:layout_below="@+id/textView"
+        android:layout_alignStart="@+id/textView"
+        android:layout_marginBottom="5dp"/>
+
+    <ImageView
+        android:id="@+id/fotoPembeli"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@drawable/image_selector"
+        android:minHeight="150dp"
+        android:minWidth="200dp"
+        android:padding="5dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/default_image"
+        android:layout_below="@+id/textView2"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/btnSelesai"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/fotoPembeli"
+        android:layout_marginTop="47dp"
+        android:text="Selesai"
+        android:layout_alignEnd="@+id/namaPembeli"
+        android:layout_alignStart="@+id/namaPembeli"
+        android:textColor="@color/colorAccent"
+        android:backgroundTint="@color/colorPrimaryDark"/>
+
+    </RelativeLayout>
+</ScrollView>

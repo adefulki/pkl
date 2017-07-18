@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.kota201.jtk.pkl">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -61,11 +62,25 @@
             android:name=".VerifikasiActivity"
             android:theme="@style/AppTheme"
             android:launchMode="singleTop"/>
-
+        <activity
+            android:name=".SettingAwalPembeliActivity"
+            android:theme="@style/AppTheme"
+            android:launchMode="singleTop"/>
         <provider
             android:name=".SuggestionProvider"
             android:authorities="com.kota201.jtk.pkl.SuggestionProvider"
             android:exported="false"/>
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.com.vansuita.pickimage.provider"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            tools:replace="android:authorities">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/picker_provider_paths" />
+        </provider>
 
         <receiver android:name=".service.NetworkChangeReceiver" >
             <intent-filter>

@@ -2,6 +2,7 @@ package com.kota201.jtk.pkl;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -23,6 +24,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.ExecutionException;
 
 import butterknife.BindString;
 import butterknife.BindView;
@@ -31,6 +33,7 @@ import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class SignupActivity extends AppCompatActivity {
     private static final String TAG = "SignupActivity";
@@ -48,6 +51,7 @@ public class SignupActivity extends AppCompatActivity {
     @BindString(R.string.my_prefs) String my_prefs;
 
     ProgressDialog progressDialog;
+    String id;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -124,13 +128,29 @@ public class SignupActivity extends AppCompatActivity {
 
     public void onSignupSuccess() {
         btnSignup.setEnabled(true);
+        SharedPreferences.Editor editor = getSharedPreferences(String.valueOf(R.string.my_prefs), MODE_PRIVATE).edit();
+        editor.putString("noPonsel", inputNoPonsel.getText().toString());
         Intent i = new Intent(getApplicationContext(), VerifikasiActivity.class);
-        i.putExtra("noPonsel",inputNoPonsel.getText().toString());
         if(radioBtnPedagang.isChecked()){
-            i.putExtra("role",1);
+            GetIdPedagangTask getIdPedagangTask = (GetIdPedagangTask) new GetIdPedagangTask().execute(inputNoPonsel.getText().toString());
+            try {
+                id = getIdPedagangTask.get();
+                editor.putString("id", id);
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            editor.putInt("role", 1);
         }else if(radioBtnPembeli.isChecked()){
-            i.putExtra("role",2);
+            GetIdPembeliTask getIdPembeliTask = (GetIdPembeliTask) new GetIdPembeliTask().execute(inputNoPonsel.getText().toString());
+            try {
+                id = getIdPembeliTask.get();
+                editor.putString("id", id);
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            editor.putInt("role", 2);
         }
+        editor.apply();
         startActivity(i);
         finish();
     }
@@ -341,6 +361,88 @@ public class SignupActivity extends AppCompatActivity {
         protected void onCancelled() {
             mAuthPembeliTask = null;
             progressDialog.dismiss();
+        }
+    }
+
+    public class GetIdPedagangTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            JSONObject dataToSend = null;
+
+            try {
+                dataToSend = new JSONObject()
+                        .put("noPonselPedagang", params[0]);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            assert dataToSend != null;
+
+            MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
+            //Create request object
+            Request request = new Request.Builder()
+                    .url("http://carmate.id/index.php/Pedagang_controller/getIdPedagangByNoPonselPedagang")
+                    .post(RequestBody.create(JSON, dataToSend.toString()))
+                    .build();
+
+            OkHttpClient client = new OkHttpClient();
+            //Make the request
+            String jsonData = null;
+            JSONObject Jobject = null;
+            try {
+                Response response = client.newCall(request).execute();
+                jsonData = response.body().string();
+                Jobject = new JSONObject(jsonData);
+                return Jobject.getString("idPedagang");
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+    }
+
+    public class GetIdPembeliTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            JSONObject dataToSend = null;
+
+            try {
+                dataToSend = new JSONObject()
+                        .put("noPonselPembeli", params[0]);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            assert dataToSend != null;
+
+            MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
+            //Create request object
+            Request request = new Request.Builder()
+                    .url("http://carmate.id/index.php/Pembeli_controller/getIdPembeliByNoPonselPembeli")
+                    .post(RequestBody.create(JSON, dataToSend.toString()))
+                    .build();
+
+            OkHttpClient client = new OkHttpClient();
+            //Make the request
+            String jsonData = null;
+            JSONObject Jobject = null;
+            try {
+                Response response = client.newCall(request).execute();
+                jsonData = response.body().string();
+                Jobject = new JSONObject(jsonData);
+                return Jobject.getString("idPembeli");
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            }
+
+            return null;
         }
     }
 }
