@@ -13,6 +13,9 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <uses-feature android:name="android.hardware.location.network" android:required="false" />
+    <uses-feature android:name="android.hardware.location.gps" android:required="false"  />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/default3"
@@ -23,8 +26,9 @@
         android:hardwareAccelerated="false"
         android:largeHeap="true">
         <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="@string/google_maps_key"
+            />
 
         <activity
             android:name=".SplashActivity"
@@ -66,10 +70,18 @@
             android:name=".SettingAwalPembeliActivity"
             android:theme="@style/AppTheme"
             android:launchMode="singleTop"/>
-        <provider
-            android:name=".SuggestionProvider"
-            android:authorities="com.kota201.jtk.pkl.SuggestionProvider"
-            android:exported="false"/>
+        <activity
+            android:name=".SettingAwalDagangan"
+            android:theme="@style/AppTheme"
+            android:launchMode="singleTop"/>
+        <activity
+            android:name=".SettingProdukDagangan"
+            android:theme="@style/AppTheme"
+            android:launchMode="singleTop"/>
+        <activity
+            android:name=".SettingLokasiPedagang"
+            android:theme="@style/AppTheme"
+            android:launchMode="singleTop"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -81,6 +93,27 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/picker_provider_paths" />
         </provider>
+
+        <activity
+            android:name="com.schibstedspain.leku.LocationPickerActivity"
+            android:label="@string/title_activity_location_picker"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan"
+            android:parentActivityName=".SettingProdukDagangan">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".SettingProdukDagangan" />
+        </activity>
+
+        <provider
+            android:name=".SuggestionProvider"
+            android:authorities="com.kota201.jtk.pkl.SuggestionProvider"
+            android:exported="false"/>
 
         <receiver android:name=".service.NetworkChangeReceiver" >
             <intent-filter>

@@ -2,6 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/colorPrimary">
     <LinearLayout
         android:orientation="vertical"
@@ -16,11 +18,11 @@
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
             android:textColorHint="@color/colorAccent">
-            <EditText android:id="@+id/namaPembeli"
+            <EditText android:id="@+id/namaDagangan"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="phone"
-                android:hint="Nama"
+                android:hint="Nama Dagangan"
                 android:maxLines="1"
                 android:singleLine="true"
                 android:textColor="@color/colorAccent"
@@ -33,11 +35,11 @@
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
             android:textColorHint="@color/colorAccent">
-            <EditText android:id="@+id/alamatPembeli"
+            <EditText android:id="@+id/deskripsiDagangan"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textMultiLine"
-                android:hint="Alamat"
+                android:hint="Deskripsi Dagangan"
                 android:minLines="1"
                 android:maxLines="3"
                 android:scrollbars="vertical"
@@ -48,7 +50,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Foto Profil"
+            android:text="Foto Dagangan"
             android:textColor="@color/colorAccent"
             android:id="@+id/textView"
             android:textSize="18sp" />
@@ -63,7 +65,7 @@
             android:layout_marginBottom="15dp"/>
 
         <ImageView
-            android:id="@+id/fotoPembeli"
+            android:id="@+id/fotoDagangan"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_marginLeft="20dp"
@@ -74,6 +76,32 @@
             android:padding="5dp"
             android:scaleType="centerInside"
             android:src="@drawable/default3" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tipe Dagangan"
+            android:textColor="@color/colorAccent"
+            android:id="@+id/textView3"
+            android:textSize="18sp"
+            android:layout_marginBottom="10dp"/>
+
+        <io.ghyeok.stickyswitch.widget.StickySwitch
+            android:id="@+id/tipeDagangan"
+            android:layout_width="match_parent"
+            android:layout_height="115dp"
+            android:layout_marginRight="40dp"
+            android:layout_marginLeft="40dp"
+            app:ss_animationDuration="500"
+            app:ss_leftIcon="@drawable/icon_diam"
+            app:ss_leftText="Diam"
+            app:ss_rightIcon="@drawable/icon_berjalan"
+            app:ss_rightText="Keliling"
+            app:ss_selectedTextSize="19sp"
+            app:ss_sliderBackgroundColor="@color/colorPrimaryDarker"
+            app:ss_switchColor="@color/colorPrimary"
+            app:ss_textColor="@color/colorAccent"
+            app:ss_textSize="20sp" />
 
         <Button
             android:id="@+id/btnSelesai"

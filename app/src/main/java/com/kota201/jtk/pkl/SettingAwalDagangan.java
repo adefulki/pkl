@@ -27,6 +27,7 @@ import com.vansuita.pickimage.bundle.PickSetup;
 import com.vansuita.pickimage.dialog.PickImageDialog;
 import com.vansuita.pickimage.listeners.IPickResult;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -40,6 +41,7 @@ import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.ghyeok.stickyswitch.widget.StickySwitch;
 import it.sauronsoftware.ftp4j.FTPClient;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -47,39 +49,43 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 
 /**
- * Created by AdeFulki on 7/17/2017.
+ * Created by AdeFulki on 7/18/2017.
  */
 
-public class SettingAwalPembeliActivity extends AppCompatActivity implements IPickResult{
+public class SettingAwalDagangan extends AppCompatActivity implements IPickResult {
 
-    @BindView(R.id.namaPembeli)
-    EditText namaPembeli;
-    @BindView(R.id.alamatPembeli)
-    EditText alamatPembeli;
-    @BindView(R.id.fotoPembeli)
-    ImageView fotoPembeli;
+    @BindView(R.id.namaDagangan)
+    EditText namaDagangan;
+    @BindView(R.id.deskripsiDagangan)
+    EditText deskripsiDagangan;
+    @BindView(R.id.fotoDagangan)
+    ImageView fotoDagangan;
+    @BindView(R.id.tipeDagangan)
+    StickySwitch tipeDagangan;
     @BindView(R.id.btnSelesai)
     Button btnSelesai;
 
-    private ImageLoader imageLoader;
-    private ProgressDialog prg;
-    private Uri imageUri;
     private String id;
+    private ImageLoader imageLoader;
+    private Uri imageUri;
+    private ProgressDialog prg;
+    private Boolean tipe;
+    private SharedPreferences prefs;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.setting_awal_pembeli);
+        setContentView(R.layout.setting_awal_dagangan);
         ButterKnife.bind(this);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle("Pengaturan Awal Pembeli");
+        getSupportActionBar().setTitle("Pengaturan Awal Dagangan");
 
-        SharedPreferences prefs = getSharedPreferences(String.valueOf(R.string.my_prefs), MODE_PRIVATE);
+        prefs = getSharedPreferences(String.valueOf(R.string.my_prefs), MODE_PRIVATE);
         id = prefs.getString("id", null);
 
-        fotoPembeli.setOnClickListener(new View.OnClickListener() {
+        fotoDagangan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 PickSetup setup = new PickSetup()
@@ -88,7 +94,18 @@ public class SettingAwalPembeliActivity extends AppCompatActivity implements IPi
                         .setCameraButtonText("Kamera")
                         .setGalleryButtonText("Gallery");
                 PickImageDialog.build(setup)
-                        .show(SettingAwalPembeliActivity.this);
+                        .show(SettingAwalDagangan.this);
+            }
+        });
+
+        tipeDagangan.setOnSelectedChangeListener(new StickySwitch.OnSelectedChangeListener() {
+            @Override
+            public void onSelectedChange(@NotNull StickySwitch.Direction direction, @NotNull String text) {
+                if (direction.name().equals("RIGHT")){
+                    tipe = true;
+                }else{
+                    tipe = false;
+                }
             }
         });
 
@@ -102,13 +119,15 @@ public class SettingAwalPembeliActivity extends AppCompatActivity implements IPi
 
                 btnSelesai.setEnabled(false);
 
-                uploadTask uploadTask = (uploadTask) new uploadTask("ftp.carmate.id",
+                uploadTask uploadTask = (uploadTask) new uploadTask(
+                        "ftp.carmate.id",
                         "pkl@carmate.id",
                         "Kam1selalu1",
                         "assets/image/",
                         id,
-                        namaPembeli.getText().toString(),
-                        alamatPembeli.getText().toString()).execute();
+                        namaDagangan.getText().toString(),
+                        deskripsiDagangan.getText().toString(),
+                        tipe).execute();
                 try {
                     Log.i("test",uploadTask.get());
                 } catch (InterruptedException e) {
@@ -128,7 +147,7 @@ public class SettingAwalPembeliActivity extends AppCompatActivity implements IPi
     @Override
     public void onPickResult(PickResult pickResult) {
         if (pickResult.getError() == null) {
-            imageLoader.displayImage(String.valueOf(pickResult.getUri()), fotoPembeli);
+            imageLoader.displayImage(String.valueOf(pickResult.getUri()), fotoDagangan);
             imageUri = pickResult.getUri();
         } else {
             //Handle possible errors
@@ -143,24 +162,26 @@ public class SettingAwalPembeliActivity extends AppCompatActivity implements IPi
         private final String mUsername;
         private final String mPassword;
         private final String mDir;
-        private final String mIdPembeli;
-        private final String mNamaPembeli;
-        private final String mAlamatPembeli;
+        private final String mIdPedagang;
+        private final String mNamaDagangan;
+        private final String mDeskripsiDagangan;
+        private final Boolean mTipeDagangan;
 
-        uploadTask(String host, String username, String password, String dir, String idPembeli, String namaPembeli, String alamatPembeli) {
+        uploadTask(String host, String username, String password, String dir, String idPedagang, String namaDagangan, String deskripsiDagangan, Boolean tipeDagangan) {
             mHost = host;
             mUsername = username;
             mPassword = password;
             mDir = dir;
-            mIdPembeli = idPembeli;
-            mNamaPembeli = namaPembeli;
-            mAlamatPembeli = alamatPembeli;
+            mIdPedagang = idPedagang;
+            mNamaDagangan = namaDagangan;
+            mDeskripsiDagangan = deskripsiDagangan;
+            mTipeDagangan = tipeDagangan;
         }
 
         @Override
         protected void onPreExecute(){
             super.onPreExecute();
-            prg = new ProgressDialog(SettingAwalPembeliActivity.this);
+            prg = new ProgressDialog(SettingAwalDagangan.this);
             prg.setMessage("Uploading...");
             prg.show();
         }
@@ -169,7 +190,6 @@ public class SettingAwalPembeliActivity extends AppCompatActivity implements IPi
             FTPClient client = new FTPClient();
 
             try {
-
                 client.connect(mHost,21);
                 client.login(mUsername, mPassword);
                 client.setType(FTPClient.TYPE_BINARY);
@@ -201,10 +221,11 @@ public class SettingAwalPembeliActivity extends AppCompatActivity implements IPi
                 JSONObject dataToSend = null;
                 try {
                     dataToSend = new JSONObject()
-                            .put("idPembeli", mIdPembeli)
-                            .put("namaPembeli", mNamaPembeli)
-                            .put("alamatPembeli", mAlamatPembeli)
-                            .put("fotoPembeli", name+".jpg");
+                            .put("idPedagang", mIdPedagang)
+                            .put("namaDagangan", mNamaDagangan)
+                            .put("deskripsiDagangan", mDeskripsiDagangan)
+                            .put("fotoDagangan", name+".jpg")
+                            .put("tipeDagangan", mTipeDagangan);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -216,7 +237,7 @@ public class SettingAwalPembeliActivity extends AppCompatActivity implements IPi
 
                 //Create request object
                 Request request = new Request.Builder()
-                        .url("http://carmate.id/index.php/Pembeli_controller/editDetailPembeli")
+                        .url("http://carmate.id/index.php/Dagangan_controller/addDagangan")
                         .post(RequestBody.create(JSON, dataToSend.toString()))
                         .build();
 
@@ -246,17 +267,19 @@ public class SettingAwalPembeliActivity extends AppCompatActivity implements IPi
         protected void onPostExecute(String str) {
             prg.dismiss();
             btnSelesai.setEnabled(true);
-            startActivity(new Intent(SettingAwalPembeliActivity.this, null));
+            if (!tipe){
+                startActivity(new Intent(SettingAwalDagangan.this, SettingLokasiPedagang.class));
+            }else
+                startActivity(new Intent(SettingAwalDagangan.this, null));
         }
     }
 
     public boolean validate() {
         boolean valid = true;
-        String nama = namaPembeli.getText().toString();
-        String alamat = alamatPembeli.getText().toString();
+        String nama = namaDagangan.getText().toString();
 
         if(nama.isEmpty()){
-            namaPembeli.setError("Nama tidak boleh kosong");
+            namaDagangan.setError("Nama tidak boleh kosong");
             valid = false;
         }
 
@@ -264,7 +287,7 @@ public class SettingAwalPembeliActivity extends AppCompatActivity implements IPi
     }
 
     public void failed() {
-        Toast.makeText(getBaseContext(), "Registrasi gagal", Toast.LENGTH_LONG).show();
+        Toast.makeText(getBaseContext(), "gagal", Toast.LENGTH_LONG).show();
         btnSelesai.setEnabled(true);
     }
 

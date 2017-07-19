@@ -127,7 +127,6 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         log.info("onCreate() intent:{}", getIntent());
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.lokasi_pedagang);
 
@@ -229,7 +228,7 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
         } else if (id == R.id.nav_registrasi) {
             startActivity(new Intent(LokasiPedagangActivity.this, SignupActivity.class));
         } else if (id == R.id.nav_tentang) {
-            startActivity(new Intent(LokasiPedagangActivity.this, SettingAwalPembeliActivity.class));
+            startActivity(new Intent(LokasiPedagangActivity.this, SettingAwalDagangan.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -304,7 +303,7 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
                             new MyCustomAdapterForItems());
                     mClusterManager.cluster();
                 }
-                handler.postDelayed(runnable, 10000);
+                handler.postDelayed(runnable, 20000);
             }
         };
         handler.post(runnable);
@@ -605,8 +604,9 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
         protected Void doInBackground(Void... voids) {
             mClusterManager.clearItems();
             ArrayList<Dagangan> listDagangan = new ArrayList<>();
-            OkHttpClient client = new OkHttpClient();
-
+            OkHttpClient client;
+            OkHttpClient.Builder okBuilder = new OkHttpClient.Builder();
+            client=okBuilder.build();
             Request.Builder builder = new Request.Builder();
             builder.url("http://carmate.id/index.php/Dagangan_controller/getAllDaganganLocation");
             Request request = builder.build();
@@ -618,31 +618,29 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
                 Response response = client.newCall(request).execute();
                 jsonData = response.body().string();
                 Jobject = new JSONArray(jsonData);
+
+                for (int i = 0; i < Jobject.length(); i++) {
+                    JSONObject c = null;
+                    Dagangan dagangan = new Dagangan();
+
+                        c = Jobject.getJSONObject(i);
+                        dagangan.setIdDagangan(c.getString("idDagangan"));
+                        dagangan.setNamaDagangan(c.getString("namaDagangan"));
+                        dagangan.setFotoDagangan(c.getString("fotoDagangan"));
+                        dagangan.setLatDagangan(c.getDouble("latDagangan"));
+                        dagangan.setLngDagangan(c.getDouble("lngDagangan"));
+                        dagangan.setMeanPenilaianDagangan((int) c.getDouble("meanPenilaianDagangan"));
+                        dagangan.setCountPenilaianDagangan(c.getInt("countPenilaianDagangan"));
+                        dagangan.setStatusRecommendation(c.getBoolean("statusRecommendation"));
+                        dagangan.setStatusBerjualan(c.getBoolean("statusBerjualan"));
+                        dagangan.setTipeDagangan(c.getBoolean("tipeDagangan"));
+
+                    listDagangan.add(dagangan);
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
-            }
-
-            for (int i = 0; i < Jobject.length(); i++) {
-                JSONObject c = null;
-                Dagangan dagangan = new Dagangan();
-                try {
-                    c = Jobject.getJSONObject(i);
-                    dagangan.setIdDagangan(c.getString("idDagangan"));
-                    dagangan.setNamaDagangan(c.getString("namaDagangan"));
-                    dagangan.setFotoDagangan(c.getString("fotoDagangan"));
-                    dagangan.setLatDagangan(c.getDouble("latDagangan"));
-                    dagangan.setLngDagangan(c.getDouble("lngDagangan"));
-                    dagangan.setMeanPenilaianDagangan((int) c.getDouble("meanPenilaianDagangan"));
-                    dagangan.setCountPenilaianDagangan(c.getInt("countPenilaianDagangan"));
-                    dagangan.setStatusRecommendation(c.getBoolean("statusRecommendation"));
-                    dagangan.setStatusBerjualan(c.getBoolean("statusBerjualan"));
-                    dagangan.setTipeDagangan(c.getBoolean("tipeDagangan"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                listDagangan.add(dagangan);
             }
 
             for (Dagangan dagangan : listDagangan) {
@@ -671,7 +669,7 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
 
         searchItem = menu.add(android.R.string.search_go);
 
-        searchItem.setIcon(R.drawable.ic_search);
+        searchItem.setIcon(R.drawable.ic_search_white);
 
         MenuItemCompat.setActionView(searchItem, searchView);
 
