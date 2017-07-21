@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorPrimary"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:id="@+id/container"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="24dp">
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColorHint="@color/colorAccent">
+            <EditText android:id="@+id/namaProduk"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:hint="Nama Produk"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="@color/colorAccent"
+                android:textColorHint="@color/colorPrimaryDarker"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColorHint="@color/colorAccent">
+            <EditText android:id="@+id/deskripsiProduk"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:hint="Deskripsi Produk"
+                android:maxLines="4"
+                android:scrollbars="vertical"
+                android:textColor="@color/colorAccent"
+                android:textColorHint="@color/colorPrimaryDarker"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColorHint="@color/colorAccent">
+            <com.wajahatkarim3.easymoneywidgets.EasyMoneyEditText
+                android:id="@+id/hargaProduk"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Harga Produk"
+                android:inputType="numberDecimal"
+                android:textColor="@color/colorAccent"
+                android:textColorHint="@color/colorPrimaryDarker"
+                app:show_currency="true"
+                app:show_commas="true"
+                app:currency_symbol="Rp."
+                />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColorHint="@color/colorAccent">
+            <EditText android:id="@+id/satuanProduk"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:hint="Satuan Produk"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="@color/colorAccent"
+                android:textColorHint="@color/colorPrimaryDarker"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Foto Profil"
+            android:textColor="@color/colorAccent"
+            android:id="@+id/textView"
+            android:textSize="18sp"
+            android:layout_marginTop="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tekan gambar untuk memilih foto"
+            android:textColor="@color/colorAccent"
+            android:id="@+id/textView2"
+            android:textSize="12sp"
+            android:layout_marginBottom="15dp"/>
+
+        <ImageView
+            android:id="@+id/fotoPembeli"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/image_selector"
+            android:minHeight="150dp"
+            android:minWidth="200dp"
+            android:padding="5dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/default3" />
+
+    </LinearLayout>
+</ScrollView>

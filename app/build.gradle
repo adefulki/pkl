@@ -68,6 +68,9 @@ dependencies {
 
     //Leku Location Picker
     compile 'com.schibstedspain.android:leku:3.4.1'
+
+    //EasyMoney-Widgets
+    compile 'com.wajahatkarim3.EasyMoney-Widgets:EasyMoney-Widgets:1.0.0'
 }
 task run(type: Task, dependsOn: 'installDebug') {
     doLast {

@@ -82,6 +82,9 @@
             android:name=".SettingLokasiPedagang"
             android:theme="@style/AppTheme"
             android:launchMode="singleTop"/>
+        <activity
+            android:name=".DetailPedagangActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"
