@@ -11,6 +11,9 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+        manifestPlaceholders = [onesignal_app_id               : "e4ca5a78-475e-47bf-99f5-1bc0acd22501",
+                                // Project number pulled from dashboard, local value is ignored.
+                                onesignal_google_project_number: "REMOTE"]
     }
     buildTypes {
         release {
@@ -71,6 +74,13 @@ dependencies {
 
     //EasyMoney-Widgets
     compile 'com.wajahatkarim3.EasyMoney-Widgets:EasyMoney-Widgets:1.0.0'
+
+    //ZXing
+    compile 'com.google.zxing:core:3.2.1'
+    compile 'com.journeyapps:zxing-android-embedded:3.2.0@aar'
+
+    //Onesignal
+    compile 'com.onesignal:OneSignal:[3.5.3,4.0.0)'
 }
 task run(type: Task, dependsOn: 'installDebug') {
     doLast {
@@ -83,3 +93,4 @@ task run(type: Task, dependsOn: 'installDebug') {
 defaultTasks 'run'
 //Butter Knife
 apply plugin: 'com.jakewharton.butterknife'
+apply plugin: 'com.google.gms.google-services'

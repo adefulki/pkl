@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Foto Profil"
+            android:textColor="@color/colorAccent"
+            android:id="@+id/textView"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tekan gambar untuk mengganti foto"
+            android:textColor="@color/colorAccent"
+            android:id="@+id/textView2"
+            android:textSize="12sp"
+            android:layout_marginBottom="15dp"/>
+
+        <ImageView
+            android:id="@+id/fotoPembeli"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/image_selector"
+            android:minHeight="150dp"
+            android:minWidth="200dp"
+            android:padding="5dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/default3" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="290dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:textColorHint="@color/colorAccent">
+                <EditText android:id="@+id/namaPembeli"
+                    android:layout_width="282dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:text="Ade Fulki"
+                    android:hint="Nama"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="@color/colorAccent"
+                    android:textColorHint="@color/colorPrimaryDarker"
+                    android:focusable="false"/>
+            </android.support.design.widget.TextInputLayout>
+
+            <ImageView
+                android:id="@+id/imageView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_edit"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"/>
+
+        </LinearLayout>
+        <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="290dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:textColorHint="@color/colorAccent">
+                <EditText android:id="@+id/emailPembeli"
+                    android:layout_width="282dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress"
+                    android:hint="Email"
+                    android:text="ade.fulki@gmail.com"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="@color/colorAccent"
+                    android:textColorHint="@color/colorPrimaryDarker"
+                    android:focusable="false"/>
+            </android.support.design.widget.TextInputLayout>
+
+            <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_edit"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="290dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:textColorHint="@color/colorAccent">
+                <EditText android:id="@+id/noPonselPembeli"
+                    android:layout_width="282dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="phone"
+                    android:hint="No Ponsel"
+                    android:text="08987803115"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="@color/colorAccent"
+                    android:textColorHint="@color/colorPrimaryDarker"
+                    android:focusable="false"/>
+            </android.support.design.widget.TextInputLayout>
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_edit"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="290dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:textColorHint="@color/colorAccent">
+                <EditText android:id="@+id/passwordPembeli"
+                    android:layout_width="282dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:text="qwerty123"
+                    android:hint="Email"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="@color/colorAccent"
+                    android:textColorHint="@color/colorPrimaryDarker"
+                    android:focusable="false"/>
+            </android.support.design.widget.TextInputLayout>
+
+            <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_edit"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="290dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:textColorHint="@color/colorAccent">
+                <EditText android:id="@+id/alamatPembeli"
+                    android:layout_width="282dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:hint="Alamat"
+                    android:text="Jl Lemahhegar No.20 Rt.13 Rw.04 Kel.Sukapura Kec.Kiaracondong Bandung 40285"
+                    android:maxLines="4"
+                    android:singleLine="true"
+                    android:textColor="@color/colorAccent"
+                    android:textColorHint="@color/colorPrimaryDarker"
+                    android:focusable="false"/>
+            </android.support.design.widget.TextInputLayout>
+
+            <ImageView
+                android:id="@+id/imageView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_edit"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"/>
+
+        </LinearLayout>
+        <Button
+            android:id="@+id/btnSelesai"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="40dp"
+            android:text="Selesai"
+            android:textColor="@color/colorAccent"
+            android:backgroundTint="@color/colorPrimaryDark"/>
+
+    </LinearLayout>
+</ScrollView>
