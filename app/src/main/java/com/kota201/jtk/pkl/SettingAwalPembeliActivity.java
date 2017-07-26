@@ -111,9 +111,7 @@ public class SettingAwalPembeliActivity extends AppCompatActivity implements IPi
                         alamatPembeli.getText().toString()).execute();
                 try {
                     Log.i("test",uploadTask.get());
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
+                } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
             }

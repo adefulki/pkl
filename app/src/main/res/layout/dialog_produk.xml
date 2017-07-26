@@ -34,9 +34,10 @@
             <EditText android:id="@+id/deskripsiProduk"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPassword"
+                android:inputType="textMultiLine"
                 android:hint="Deskripsi Produk"
-                android:maxLines="4"
+                android:minLines="1"
+                android:maxLines="3"
                 android:scrollbars="vertical"
                 android:textColor="@color/colorAccent"
                 android:textColorHint="@color/colorPrimaryDarker"/>
@@ -47,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:textColorHint="@color/colorAccent">
-            <com.wajahatkarim3.easymoneywidgets.EasyMoneyEditText
+            <EditText
                 android:id="@+id/hargaProduk"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -55,9 +56,6 @@
                 android:inputType="numberDecimal"
                 android:textColor="@color/colorAccent"
                 android:textColorHint="@color/colorPrimaryDarker"
-                app:show_currency="true"
-                app:show_commas="true"
-                app:currency_symbol="Rp."
                 />
         </android.support.design.widget.TextInputLayout>
 
@@ -96,7 +94,7 @@
             android:layout_marginBottom="15dp"/>
 
         <ImageView
-            android:id="@+id/fotoPembeli"
+            android:id="@+id/fotoProduk"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_marginLeft="20dp"
