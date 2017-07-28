@@ -6,13 +6,15 @@
     android:layout_margin="10dp"
     app:cardCornerRadius="6dp"
     app:cardElevation="3dp"
-    app:cardBackgroundColor="@color/colorPrimary"
+    app:cardBackgroundColor="@color/colorPrimaryDark"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
         <FrameLayout
             android:id="@+id/frameImage"
             android:layout_width="match_parent"
@@ -20,12 +22,12 @@
             android:layout_gravity="center_horizontal">
 
             <ImageView
-                android:src="@drawable/default3"
                 android:id="@+id/fotoProduk"
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
                 android:layout_gravity="center"
                 android:scaleType="centerCrop"
+                android:src="@drawable/default3"
 
                 />
 
@@ -51,81 +53,84 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="11dp"
-                app:srcCompat="@drawable/ic_edit"
-                android:backgroundTint="@color/colorPrimaryDark"/>
+                android:backgroundTint="@color/colorSecondary"
+                app:srcCompat="@drawable/ic_edit" />
         </FrameLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/frameImage"
-            android:layout_centerVertical="true"
-            android:layout_height="wrap_content">
+            android:layout_centerVertical="true">
+
             <TextView
                 android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Harga Produk :"
                 android:layout_alignParentStart="true"
-                android:layout_marginTop="20dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="5dp"
-                android:textColor="@color/colorAccent"/>
+                android:layout_marginTop="20dp"
+                android:text="Harga Produk :"
+                android:textColor="@color/iron" />
 
             <TextView
+                android:id="@+id/hargaProduk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Harga Produk"
-                android:id="@+id/hargaProduk"
-                android:layout_toEndOf="@+id/textView3"
-                android:layout_marginTop="20dp"
-                android:layout_marginLeft="5dp"
+                android:layout_alignStart="@+id/textView3"
+                android:layout_below="@+id/textView3"
                 android:layout_marginRight="5dp"
-                android:textColor="@color/colorAccent"/>
+                android:layout_marginTop="5dp"
+                android:text="Harga Produk"
+                android:textColor="@color/colorAccent" />
 
             <TextView
+                android:id="@+id/textView7"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="/"
-                android:id="@+id/textView7"
-                android:layout_toEndOf="@+id/hargaProduk"
-                android:layout_marginTop="20dp"
-                android:textColor="@color/colorAccent"/>
+                android:textColor="@color/colorAccent"
+                android:layout_marginLeft="5dp"
+                android:layout_above="@+id/textView2"
+                android:layout_toEndOf="@+id/hargaProduk" />
 
             <TextView
+                android:id="@+id/satuanProduk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Satuam Produk"
-                android:id="@+id/satuanProduk"
-                android:layout_toEndOf="@+id/textView7"
-                android:layout_marginTop="20dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="20dp"
-                android:textColor="@color/colorAccent"/>
+                android:layout_marginTop="5dp"
+                android:text="Satuam Produk"
+                android:textColor="@color/colorAccent"
+                android:layout_alignBaseline="@+id/textView7"
+                android:layout_alignBottom="@+id/textView7"
+                android:layout_toEndOf="@+id/textView7" />
 
             <TextView
                 android:id="@+id/textView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Deskripsi Produk :"
-                android:layout_below="@+id/textView3"
-                android:layout_alignParentStart="true"
+                android:layout_alignStart="@+id/deskripsiProduk"
+                android:layout_below="@+id/hargaProduk"
                 android:layout_marginTop="5dp"
-                android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:textColor="@color/colorAccent"/>
+                android:text="Deskripsi Produk :"
+                android:textColor="@color/iron" />
 
             <TextView
                 android:id="@+id/deskripsiProduk"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Deskripsi Produk"
-                android:layout_below="@+id/textView2"
                 android:layout_alignParentStart="true"
-                android:layout_marginTop="5dp"
+                android:layout_below="@+id/textView2"
+                android:layout_marginBottom="20dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_marginBottom="20dp"
-                android:textColor="@color/colorAccent"/>
+                android:layout_marginTop="5dp"
+                android:text="Deskripsi Produk"
+                android:textColor="@color/colorAccent" />
         </RelativeLayout>
     </LinearLayout>
 </android.support.v7.widget.CardView>

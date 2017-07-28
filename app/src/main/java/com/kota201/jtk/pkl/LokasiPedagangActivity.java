@@ -74,6 +74,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -111,8 +112,6 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
     private UiSettings mUiSettings;
     private ClusterManager<Dagangan> mClusterManager;
     private static final org.slf4j.Logger log;
-    private Handler handler;
-    private Runnable runnable;
     private BroadcastReceiver mNetworkReceiver;
     ProgressDialog progressDialog;
     private Dagangan clickedClusterItem;
@@ -228,7 +227,7 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
         } else if (id == R.id.nav_registrasi) {
             startActivity(new Intent(LokasiPedagangActivity.this, SignupActivity.class));
         } else if (id == R.id.nav_tentang) {
-            startActivity(new Intent(LokasiPedagangActivity.this, SettingProdukDagangan.class));
+            startActivity(new Intent(LokasiPedagangActivity.this, DetailPedagangActivity.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -288,11 +287,9 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
                     }
                 });
 
-        handler = new Handler();
-        runnable = new Runnable() {
-            @Override
+        final Handler handler = new Handler();
+        final Runnable runnable = new Runnable() {
             public void run() {
-                // TODO Auto-generated method stub
                 if (NetworkChangeReceiver.isNetworkAvailable(getBaseContext())) {
                     try {
                         new getDagangan().execute().get();
@@ -303,10 +300,11 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
                             new MyCustomAdapterForItems());
                     mClusterManager.cluster();
                 }
-                handler.postDelayed(runnable, 20000);
+                handler.postDelayed(this, 5000);
             }
         };
         handler.post(runnable);
+
     }
 
     //-------------------- START Permission Access Fine Location --------------------//
@@ -605,7 +603,10 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
             mClusterManager.clearItems();
             ArrayList<Dagangan> listDagangan = new ArrayList<>();
             OkHttpClient client;
-            OkHttpClient.Builder okBuilder = new OkHttpClient.Builder();
+            OkHttpClient.Builder okBuilder = new OkHttpClient.Builder()
+                    .connectTimeout(10, TimeUnit.SECONDS)
+                    .writeTimeout(10, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS);
             client=okBuilder.build();
             Request.Builder builder = new Request.Builder();
             builder.url("http://carmate.id/index.php/Dagangan_controller/getAllDaganganLocation");

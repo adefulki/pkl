@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +21,10 @@ import android.widget.ImageView;
 import com.developers.smartytoast.SmartyToast;
 import com.iceteck.silicompressorr.SiliCompressor;
 import com.kota201.jtk.pkl.model.Produk;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.utils.L;
 import com.vansuita.pickimage.bean.PickResult;
 import com.vansuita.pickimage.bundle.PickSetup;
@@ -83,8 +86,11 @@ public class ProdukAdapter extends RecyclerView.Adapter<ProdukViewHolder>{
         holder.deskripsiProduk.setText(produk.getDeskripsiProduk());
         holder.hargaProduk.setText(produk.getHargaProduk());
         holder.satuanProduk.setText(produk.getSatuanProduk());
+        DisplayImageOptions options = new DisplayImageOptions.Builder()
+                .displayer(new RoundedBitmapDisplayer((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6, context.getResources().getDisplayMetrics())))
+                .build();
         ImageLoader imageLoader = ImageLoader.getInstance();
-        imageLoader.displayImage("http://carmate.id/assets/image/" + produk.getFotoProduk(), holder.fotoProduk);
+        imageLoader.displayImage("http://carmate.id/assets/image/" + produk.getFotoProduk(), holder.fotoProduk, options);
         holder.editButton.setOnClickListener(editClickListener);
         holder.editButton.setTag(holder);
     }
@@ -147,7 +153,7 @@ public class ProdukAdapter extends RecyclerView.Adapter<ProdukViewHolder>{
             //Building dialog
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setView(layout);
-            builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
@@ -171,7 +177,7 @@ public class ProdukAdapter extends RecyclerView.Adapter<ProdukViewHolder>{
                     }
                 }
             });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            builder.setNegativeButton("Batal", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
@@ -181,10 +187,10 @@ public class ProdukAdapter extends RecyclerView.Adapter<ProdukViewHolder>{
             dialog.show();
             Button nbutton = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
             nbutton.setTextColor(context.getResources()
-                    .getColor(R.color.colorPrimaryDark));
+                    .getColor(R.color.colorSecondary));
             Button pbutton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
             pbutton.setTextColor(context.getResources()
-                    .getColor(R.color.colorPrimaryDark));
+                    .getColor(R.color.colorSecondary));
         }
     };
 

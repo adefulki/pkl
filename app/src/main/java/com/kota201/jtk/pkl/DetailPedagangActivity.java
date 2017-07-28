@@ -10,6 +10,9 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.kota201.jtk.pkl.fragment.PenilaianDetailPedagangFragment;
 import com.kota201.jtk.pkl.fragment.ProdukDetailPedagangFragment;
 import com.kota201.jtk.pkl.fragment.TentangDetailPedagangFragment;
@@ -21,7 +24,7 @@ import java.util.List;
  * Created by AdeFulki on 7/20/2017.
  */
 
-public class DetailPedagangActivity extends AppCompatActivity {
+public class DetailPedagangActivity extends AppCompatActivity implements OnMapReadyCallback{
 
     private Toolbar toolbar;
     private ViewPager viewPager;
@@ -46,6 +49,12 @@ public class DetailPedagangActivity extends AppCompatActivity {
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+
+        SupportMapFragment mapFragment =
+                (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
+        //FloatingActionsMenu rightLabels = (FloatingActionsMenu) findViewById(R.id.right_labels);
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -54,6 +63,11 @@ public class DetailPedagangActivity extends AppCompatActivity {
         adapter.addFragment(new TentangDetailPedagangFragment(), "TENTANG");
         adapter.addFragment(new PenilaianDetailPedagangFragment(), "PENILAIAN");
         viewPager.setAdapter(adapter);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {

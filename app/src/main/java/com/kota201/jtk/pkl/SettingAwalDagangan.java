@@ -270,7 +270,7 @@ public class SettingAwalDagangan extends AppCompatActivity implements IPickResul
             if (!tipe){
                 startActivity(new Intent(SettingAwalDagangan.this, SettingLokasiPedagang.class));
             }else
-                startActivity(new Intent(SettingAwalDagangan.this, null));
+                startActivity(new Intent(SettingAwalDagangan.this, SettingProdukDagangan.class));
         }
     }
 
