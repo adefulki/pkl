@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.developers.smartytoast.SmartyToast;
 import com.iceteck.silicompressorr.SiliCompressor;
@@ -52,10 +51,10 @@ import okhttp3.RequestBody;
 
 public class SettingAwalPembeliActivity extends AppCompatActivity implements IPickResult{
 
-    @BindView(R.id.namaPembeli)
-    EditText namaPembeli;
-    @BindView(R.id.alamatPembeli)
-    EditText alamatPembeli;
+    @BindView(R.id.inputNamaPembeli)
+    EditText inputNamaPembeli;
+    @BindView(R.id.inputAlamatPembeli)
+    EditText inputAlamatPembeli;
     @BindView(R.id.fotoPembeli)
     ImageView fotoPembeli;
     @BindView(R.id.btnSelesai)
@@ -63,7 +62,7 @@ public class SettingAwalPembeliActivity extends AppCompatActivity implements IPi
 
     private ImageLoader imageLoader;
     private ProgressDialog prg;
-    private Uri imageUri;
+    private Uri imageUri = null;
     private String id;
 
     @Override
@@ -107,8 +106,8 @@ public class SettingAwalPembeliActivity extends AppCompatActivity implements IPi
                         "Kam1selalu1",
                         "assets/image/",
                         id,
-                        namaPembeli.getText().toString(),
-                        alamatPembeli.getText().toString()).execute();
+                        inputNamaPembeli.getText().toString(),
+                        inputAlamatPembeli.getText().toString()).execute();
                 try {
                     Log.i("test",uploadTask.get());
                 } catch (InterruptedException | ExecutionException e) {
@@ -158,36 +157,48 @@ public class SettingAwalPembeliActivity extends AppCompatActivity implements IPi
         @Override
         protected void onPreExecute(){
             super.onPreExecute();
-            prg = new ProgressDialog(SettingAwalPembeliActivity.this);
-            prg.setMessage("Uploading...");
+            prg = new ProgressDialog(SettingAwalPembeliActivity.this,
+                    R.style.AppTheme_Dark_Dialog);
+            prg.setIndeterminate(true);
+            prg.setMessage("Menambah Info Pembeli...");
             prg.show();
         }
         @Override
         protected String doInBackground(Void... params) {
+            try {
+                // Simulate network access.
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                return null;
+            }
+
             FTPClient client = new FTPClient();
 
             try {
+                String name = null;
+                if(imageUri != null){
+                    client.connect(mHost,21);
+                    client.login(mUsername, mPassword);
+                    client.setType(FTPClient.TYPE_BINARY);
+                    client.changeDirectory(mDir);
+                    Bitmap imageBitmap = SiliCompressor.with(getBaseContext()).getCompressBitmap(String.valueOf(imageUri));
+                    File filesDir = getBaseContext().getFilesDir();
+                    SecureRandom random = new SecureRandom();
+                    name = new BigInteger(130, random).toString(32);
+                    name = name+".jpg";
+                    File imageFile = new File(filesDir, name);
 
-                client.connect(mHost,21);
-                client.login(mUsername, mPassword);
-                client.setType(FTPClient.TYPE_BINARY);
-                client.changeDirectory(mDir);
-                Bitmap imageBitmap = SiliCompressor.with(getBaseContext()).getCompressBitmap(String.valueOf(imageUri));
-                File filesDir = getBaseContext().getFilesDir();
-                SecureRandom random = new SecureRandom();
-                String name = new BigInteger(130, random).toString(32);
-                File imageFile = new File(filesDir, name + ".jpg");
-
-                OutputStream os;
-                try {
-                    os = new FileOutputStream(imageFile);
-                    imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
-                    os.flush();
-                    os.close();
-                } catch (Exception e) {
-                    Log.e(getClass().getSimpleName(), "Error writing bitmap", e);
+                    OutputStream os;
+                    try {
+                        os = new FileOutputStream(imageFile);
+                        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
+                        os.flush();
+                        os.close();
+                    } catch (Exception e) {
+                        Log.e(getClass().getSimpleName(), "Error writing bitmap", e);
+                    }
+                    client.upload(imageFile);
                 }
-                client.upload(imageFile);
 
                 try {
                     // Simulate network access.
@@ -202,7 +213,7 @@ public class SettingAwalPembeliActivity extends AppCompatActivity implements IPi
                             .put("idPembeli", mIdPembeli)
                             .put("namaPembeli", mNamaPembeli)
                             .put("alamatPembeli", mAlamatPembeli)
-                            .put("fotoPembeli", name+".jpg");
+                            .put("fotoPembeli", name);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -245,16 +256,17 @@ public class SettingAwalPembeliActivity extends AppCompatActivity implements IPi
             prg.dismiss();
             btnSelesai.setEnabled(true);
             startActivity(new Intent(SettingAwalPembeliActivity.this, null));
+            finish();
         }
     }
 
     public boolean validate() {
         boolean valid = true;
-        String nama = namaPembeli.getText().toString();
-        String alamat = alamatPembeli.getText().toString();
+        String nama = inputNamaPembeli.getText().toString();
+        String alamat = inputAlamatPembeli.getText().toString();
 
         if(nama.isEmpty()){
-            namaPembeli.setError("Nama tidak boleh kosong");
+            inputNamaPembeli.setError("Nama tidak boleh kosong");
             valid = false;
         }
 
@@ -262,7 +274,7 @@ public class SettingAwalPembeliActivity extends AppCompatActivity implements IPi
     }
 
     public void failed() {
-        Toast.makeText(getBaseContext(), "Registrasi gagal", Toast.LENGTH_LONG).show();
+        SmartyToast.makeText(getApplicationContext(),"Gagal",SmartyToast.LENGTH_SHORT,SmartyToast.ERROR);
         btnSelesai.setEnabled(true);
     }
 

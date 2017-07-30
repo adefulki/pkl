@@ -32,8 +32,8 @@ public class VerifikasiActivity extends AppCompatActivity {
     TextView textView;
     @BindView(R.id.btnKirimUlang)
     Button btnKirimUlang;
-    @BindView(R.id.kodeAkses)
-    PinEntryEditText mKodeAkses;
+    @BindView(R.id.inputKodeAkses)
+    PinEntryEditText inputKodeAkses;
     @BindView(R.id.btnCekKodeAkses)
     Button btnCekKodeAkses;
 
@@ -74,8 +74,8 @@ public class VerifikasiActivity extends AppCompatActivity {
             }
         });
 
-        if (mKodeAkses != null) {
-            mKodeAkses.setOnPinEnteredListener(new PinEntryEditText.OnPinEnteredListener() {
+        if (inputKodeAkses != null) {
+            inputKodeAkses.setOnPinEnteredListener(new PinEntryEditText.OnPinEnteredListener() {
                 @Override
                 public void onPinEntered(CharSequence str) {
                     kodeAkses = str.toString();
@@ -100,10 +100,12 @@ public class VerifikasiActivity extends AppCompatActivity {
                 JSONObject jObj = new JSONObject(postMethod.get());
                 statusValid = jObj.getBoolean("statusValid");
                 if (statusValid){
+                    SmartyToast.makeText(getApplicationContext(),"Kode Akses valid",SmartyToast.LENGTH_SHORT,SmartyToast.DONE);
+                    this.finish();
                     startActivity(new Intent(VerifikasiActivity.this, SettingAwalDagangan.class));
                 }else{
-                    SmartyToast.makeText(getApplicationContext(),"Kode Akses salah",SmartyToast.LENGTH_SHORT,SmartyToast.ERROR);
-                    mKodeAkses.setText(null);
+                    SmartyToast.makeText(getApplicationContext(),"Kode Akses tidak valid",SmartyToast.LENGTH_SHORT,SmartyToast.ERROR);
+                    inputKodeAkses.setText(null);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -130,7 +132,7 @@ public class VerifikasiActivity extends AppCompatActivity {
                     startActivity(new Intent(VerifikasiActivity.this, SettingAwalPembeliActivity.class));
                 }else{
                     SmartyToast.makeText(getApplicationContext(),"Kode Akses salah",SmartyToast.LENGTH_SHORT,SmartyToast.ERROR);
-                    mKodeAkses.setText(null);
+                    inputKodeAkses.setText(null);
                 }
                 Log.i("Tahap","TIGA-1");
             } catch (JSONException e) {

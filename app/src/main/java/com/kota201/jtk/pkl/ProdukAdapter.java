@@ -41,9 +41,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
+import faranjit.currency.edittext.CurrencyEditText;
 import it.sauronsoftware.ftp4j.FTPClient;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -60,9 +62,13 @@ public class ProdukAdapter extends RecyclerView.Adapter<ProdukViewHolder>{
     ArrayList<Produk> listProduk = new ArrayList<>();
     private final Context context;
     private final JSONObject mJsonObj;
-    private ImageView fotoProduk;
     private ImageLoader imageLoader;
     private Uri imageUri;
+    private ImageView inputFotoProduk;
+    private EditText inputNamaProduk;
+    private EditText inputDeskripsiProduk;
+    private CurrencyEditText inputHargaProduk;
+    private EditText inputSatuanProduk;
 
     LayoutInflater inflater;
     public ProdukAdapter(Context context, JSONObject jsonObj) {
@@ -91,14 +97,30 @@ public class ProdukAdapter extends RecyclerView.Adapter<ProdukViewHolder>{
                 .build();
         ImageLoader imageLoader = ImageLoader.getInstance();
         imageLoader.displayImage("http://carmate.id/assets/image/" + produk.getFotoProduk(), holder.fotoProduk, options);
-        holder.editButton.setOnClickListener(editClickListener);
-        holder.editButton.setTag(holder);
+        holder.btnEdit.setOnClickListener(editClickListener);
+        holder.btnEdit.setTag(holder);
+        holder.btnDelete.setOnClickListener(deleteClickListener);
+        holder.btnDelete.setTag(holder);
+
     }
+
+    View.OnClickListener deleteClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            ProdukViewHolder vholder = (ProdukViewHolder) v.getTag();
+            int position = vholder.getPosition();
+
+            final Produk produk = listProduk.get(position);
+
+            new deleteProduk(produk.getIdProduk()).execute();
+        }
+    };
 
     View.OnClickListener editClickListener =new View.OnClickListener(){
         Boolean statusEditFoto;
         @Override
         public void onClick(View v) {
+
             ProdukViewHolder vholder = (ProdukViewHolder) v.getTag();
             int position = vholder.getPosition();
 
@@ -109,14 +131,14 @@ public class ProdukAdapter extends RecyclerView.Adapter<ProdukViewHolder>{
             L.disableLogging();
 
             final View layout = inflater.inflate(R.layout.dialog_produk, (ViewGroup) v.findViewById(R.id.container));
-            fotoProduk = (ImageView) layout.findViewById(R.id.fotoProduk);
-            final EditText namaProduk = (EditText) layout.findViewById(R.id.namaProduk);
-            final EditText deskripsiProduk = (EditText) layout.findViewById(R.id.deskripsiProduk);
-            final EditText hargaProduk = (EditText) layout.findViewById(R.id.hargaProduk);
-            final EditText satuanProduk = (EditText) layout.findViewById(R.id.satuanProduk);
+            inputFotoProduk = (ImageView) layout.findViewById(R.id.inputFotoProduk);
+            inputNamaProduk = (EditText) layout.findViewById(R.id.inputNamaProduk);
+            inputDeskripsiProduk = (EditText) layout.findViewById(R.id.inputDeskripsiProduk);
+            inputHargaProduk = (CurrencyEditText) layout.findViewById(R.id.inputHargaProduk);
+            inputSatuanProduk = (EditText) layout.findViewById(R.id.inputSatuanProduk);
 
 
-            fotoProduk.setOnClickListener(new View.OnClickListener() {
+            inputFotoProduk.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     PickSetup setup = new PickSetup()
@@ -130,7 +152,7 @@ public class ProdukAdapter extends RecyclerView.Adapter<ProdukViewHolder>{
                                 public void onPickResult(PickResult pickResult) {
                                     if (pickResult.getError() == null) {
                                         statusEditFoto = true;
-                                        imageLoader.displayImage(String.valueOf(pickResult.getUri()), fotoProduk);
+                                        imageLoader.displayImage(String.valueOf(pickResult.getUri()), inputFotoProduk);
                                         imageUri = pickResult.getUri();
                                     } else {
                                         //Handle possible errors
@@ -143,12 +165,12 @@ public class ProdukAdapter extends RecyclerView.Adapter<ProdukViewHolder>{
             });
 
             final Produk produk = listProduk.get(position);
-            imageLoader.displayImage("http://carmate.id/assets/image/" + produk.getFotoProduk(), fotoProduk);
+            imageLoader.displayImage("http://carmate.id/assets/image/" + produk.getFotoProduk(), inputFotoProduk);
 
-            namaProduk.setText(produk.getNamaProduk());
-            deskripsiProduk.setText(produk.getDeskripsiProduk());
-            hargaProduk.setText(produk.getHargaProduk());
-            satuanProduk.setText(produk.getSatuanProduk());
+            inputNamaProduk.setText(produk.getNamaProduk());
+            inputDeskripsiProduk.setText(produk.getDeskripsiProduk());
+            inputHargaProduk.setText(produk.getHargaProduk());
+            inputSatuanProduk.setText(produk.getSatuanProduk());
 
             //Building dialog
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -156,18 +178,27 @@ public class ProdukAdapter extends RecyclerView.Adapter<ProdukViewHolder>{
             builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    if (!validate()) {
+                        failed();
+                        return;
+                    }
                     dialog.dismiss();
-                    editProduk editProdukTask = (editProduk) new editProduk("ftp.carmate.id",
-                            "pkl@carmate.id",
-                            "Kam1selalu1",
-                            "assets/image/",
-                            produk.getIdProduk(),
-                            namaProduk.getText().toString(),
-                            deskripsiProduk.getText().toString(),
-                            hargaProduk.getText().toString(),
-                            satuanProduk.getText().toString(),
-                            produk.getFotoProduk(),
-                            statusEditFoto).execute();
+                    editProduk editProdukTask = null;
+                    try {
+                        editProdukTask = (editProduk) new editProduk("ftp.carmate.id",
+                                "pkl@carmate.id",
+                                "Kam1selalu1",
+                                "assets/image/",
+                                produk.getIdProduk(),
+                                inputNamaProduk.getText().toString(),
+                                inputDeskripsiProduk.getText().toString(),
+                                inputHargaProduk.getCurrencyText(),
+                                inputSatuanProduk.getText().toString(),
+                                produk.getFotoProduk(),
+                                statusEditFoto).execute();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                     try {
                         Log.i("test",editProdukTask.get());
                     } catch (InterruptedException e) {
@@ -386,5 +417,109 @@ public class ProdukAdapter extends RecyclerView.Adapter<ProdukViewHolder>{
             addItem();
             ProdukAdapter.this.notifyDataSetChanged();
         }
+    }
+
+    class deleteProduk extends AsyncTask<Void, Void, String> {
+
+        private final String mIdProduk;
+        private ProgressDialog prg;
+
+        deleteProduk(String idProduk) {
+            mIdProduk = idProduk;
+        }
+
+        @Override
+        protected void onPreExecute(){
+            super.onPreExecute();
+            prg = new ProgressDialog(context);
+            prg.setMessage("Deleting...");
+            prg.show();
+        }
+        @Override
+        protected String doInBackground(Void... params) {
+            FTPClient client = new FTPClient();
+
+            try {
+
+                JSONObject dataToSend = null;
+                try {
+                    dataToSend = new JSONObject()
+                            .put("idProduk", mIdProduk);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Log.i("test","sudah membuat json");
+                assert dataToSend != null;
+
+                MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
+                //Create request object
+                Request request = new Request.Builder()
+                        .url("http://carmate.id/index.php/Produk_controller/removeProduk")
+                        .post(RequestBody.create(JSON, dataToSend.toString()))
+                        .build();
+
+                OkHttpClient okClient = new OkHttpClient();
+                //Make the request
+                try {
+                    okClient.newCall(request).execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Log.i("test","selesai request");
+
+                return new String("Upload Successful");
+            } catch (Exception e) {
+                e.printStackTrace();
+                try {
+                    client.disconnect(true);
+                } catch (Exception e2) {
+                    e2.printStackTrace();
+                }
+                String t="Failure : " + e.getLocalizedMessage();
+                return t;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String str) {
+            prg.dismiss();
+            addItem();
+            ProdukAdapter.this.notifyDataSetChanged();
+        }
+    }
+
+    public boolean validate() {
+        boolean valid = true;
+        String nama = inputNamaProduk.getText().toString();
+        String satuan = inputSatuanProduk.getText().toString();
+        String harga = null;
+        try {
+            harga = inputHargaProduk.getCurrencyText();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        if(nama.isEmpty()){
+            inputNamaProduk.setError("Nama tidak boleh kosong");
+            valid = false;
+        }
+
+        if(satuan.isEmpty()){
+            inputSatuanProduk.setError("Satuan tidak boleh kosong");
+            valid = false;
+        }
+
+        if(harga.isEmpty()){
+            inputHargaProduk.setError("Harga tidak boleh kosong");
+            valid = false;
+        }
+
+        return valid;
+    }
+
+    public void failed() {
+        SmartyToast.makeText(context,"Gagal",SmartyToast.LENGTH_SHORT,SmartyToast.ERROR);
     }
 }

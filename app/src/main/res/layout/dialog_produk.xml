@@ -10,76 +10,61 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="24dp">
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textColorHint="@color/colorAccent">
-            <EditText android:id="@+id/namaProduk"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                android:hint="Nama Produk"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:textColor="@color/colorAccent"
-                android:textColorHint="@color/colorPrimaryDarker"/>
-        </android.support.design.widget.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
+        <EditText android:id="@+id/inputNamaProduk"
+            android:layout_margin="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textColorHint="@color/colorAccent">
-            <EditText android:id="@+id/deskripsiProduk"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:hint="Deskripsi Produk"
-                android:minLines="1"
-                android:maxLines="3"
-                android:scrollbars="vertical"
-                android:textColor="@color/colorAccent"
-                android:textColorHint="@color/colorPrimaryDarker"/>
-        </android.support.design.widget.TextInputLayout>
+            android:inputType="text"
+            android:hint="Nama Produk"
+            android:textColor="@color/colorPrimary"
+            android:background="@drawable/edit_text_style"
+            android:textColorHint="@color/colorPrimaryLight"/>
 
-        <android.support.design.widget.TextInputLayout
+        <EditText android:id="@+id/inputDeskripsiProduk"
+            android:layout_margin="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textColorHint="@color/colorAccent">
-            <EditText
-                android:id="@+id/hargaProduk"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Harga Produk"
-                android:inputType="numberDecimal"
-                android:textColor="@color/colorAccent"
-                android:textColorHint="@color/colorPrimaryDarker"
-                />
-        </android.support.design.widget.TextInputLayout>
+            android:inputType="textMultiLine"
+            android:hint="Deskripsi Produk"
+            android:minLines="1"
+            android:maxLines="3"
+            android:textColor="@color/colorPrimary"
+            android:background="@drawable/edit_text_style"
+            android:textColorHint="@color/colorPrimaryLight"/>
 
-        <android.support.design.widget.TextInputLayout
+        <faranjit.currency.edittext.CurrencyEditText
+            android:id="@+id/inputHargaProduk"
+            android:layout_margin="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textColorHint="@color/colorAccent">
-            <EditText android:id="@+id/satuanProduk"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                android:hint="Satuan Produk"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:textColor="@color/colorAccent"
-                android:textColorHint="@color/colorPrimaryDarker"/>
-        </android.support.design.widget.TextInputLayout>
+            android:inputType="numberDecimal"
+            android:hint="Harga Produk"
+            android:textColor="@color/colorPrimary"
+            android:background="@drawable/edit_text_style"
+            android:textColorHint="@color/colorPrimaryLight"
+            android:drawableLeft="@drawable/ic_rp"
+            android:drawablePadding="10dp"
+            app:groupDivider="."
+            app:monetaryDivider=","
+            app:showSymbol="false"
+            app:locale="id_ID" />
+
+        <EditText android:id="@+id/inputSatuanProduk"
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:hint="Satuan Produk"
+            android:textColor="@color/colorPrimary"
+            android:background="@drawable/edit_text_style"
+            android:textColorHint="@color/colorPrimaryLight"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Foto Profil"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/white"
             android:id="@+id/textView"
             android:textSize="18sp"
             android:layout_marginTop="8dp"/>
@@ -88,13 +73,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Tekan gambar untuk memilih foto"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/white"
             android:id="@+id/textView2"
             android:textSize="12sp"
             android:layout_marginBottom="15dp"/>
 
         <ImageView
-            android:id="@+id/fotoProduk"
+            android:id="@+id/inputFotoProduk"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_marginLeft="20dp"

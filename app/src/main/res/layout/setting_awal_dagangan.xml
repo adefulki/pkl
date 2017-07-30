@@ -2,56 +2,40 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/colorPrimary">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="24dp"
-        android:paddingRight="24dp">
+        android:padding="24dp">
 
-        <android.support.design.widget.TextInputLayout
+        <EditText android:id="@+id/inputNamaDagangan"
+            android:layout_margin="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:textColorHint="@color/colorAccent">
-            <EditText android:id="@+id/namaDagangan"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="phone"
-                android:hint="Nama Dagangan"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:textColor="@color/colorAccent"
-                android:textColorHint="@color/colorPrimaryDarker"/>
-        </android.support.design.widget.TextInputLayout>
+            android:inputType="text"
+            android:hint="Nama Dagangan"
+            android:textColor="@color/colorPrimary"
+            android:background="@drawable/edit_text_style2"
+            android:textColorHint="@color/colorPrimaryLight"/>
 
-        <android.support.design.widget.TextInputLayout
+        <EditText android:id="@+id/inputDeskripsiDagangan"
+            android:layout_margin="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:textColorHint="@color/colorAccent">
-            <EditText android:id="@+id/deskripsiDagangan"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:hint="Deskripsi Dagangan"
-                android:minLines="1"
-                android:maxLines="3"
-                android:scrollbars="vertical"
-                android:textColor="@color/colorAccent"
-                android:textColorHint="@color/colorPrimaryDarker"/>
-        </android.support.design.widget.TextInputLayout>
+            android:inputType="textMultiLine"
+            android:hint="Deskripsi Dagangan"
+            android:minLines="1"
+            android:maxLines="3"
+            android:textColor="@color/colorPrimary"
+            android:background="@drawable/edit_text_style2"
+            android:textColorHint="@color/colorPrimaryLight"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Foto Dagangan"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/colorPrimaryDark"
             android:id="@+id/textView"
             android:textSize="18sp" />
 
@@ -59,7 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Tekan gambar untuk memilih foto"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/colorPrimaryDark"
             android:id="@+id/textView2"
             android:textSize="12sp"
             android:layout_marginBottom="15dp"/>
@@ -75,7 +59,7 @@
             android:minWidth="200dp"
             android:padding="5dp"
             android:scaleType="centerInside"
-            android:src="@drawable/default3" />
+            android:src="@drawable/default1" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -98,19 +82,20 @@
             app:ss_rightIcon="@drawable/icon_berjalan"
             app:ss_rightText="Keliling"
             app:ss_selectedTextSize="19sp"
-            app:ss_sliderBackgroundColor="@color/colorPrimaryDarker"
+            app:ss_sliderBackgroundColor="@color/colorPrimaryDark"
             app:ss_switchColor="@color/colorPrimary"
-            app:ss_textColor="@color/colorAccent"
+            app:ss_textColor="@color/colorPrimary"
             app:ss_textSize="20sp" />
 
-        <Button
+        <android.support.v7.widget.AppCompatButton
             android:id="@+id/btnSelesai"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:layout_marginBottom="40dp"
-            android:text="Selesai"
-            android:textColor="@color/colorAccent"
+            android:layout_marginBottom="24dp"
+            android:padding="12dp"
+            android:text="Lanjut"
+            android:textColor="@color/white"
             android:backgroundTint="@color/colorPrimaryDark"/>
 
     </LinearLayout>

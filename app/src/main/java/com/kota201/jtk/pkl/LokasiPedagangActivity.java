@@ -74,10 +74,10 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import okhttp3.CacheControl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -116,6 +116,8 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
     ProgressDialog progressDialog;
     private Dagangan clickedClusterItem;
     private ImageLoader imageLoader;
+    private Handler handler;
+    private Runnable runnable;
 
     static {
         AndroidLoggerFactory.configureDefaultLogger(LokasiPedagangActivity.class.getPackage());
@@ -169,6 +171,8 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
         //Search
         suggestions = new SearchRecentSuggestions(this, SuggestionProvider.AUTHORITY,
                 SuggestionProvider.MODE);
+
+        suggestions.clearHistory();
 
         // Associate searchable configuration with the SearchView
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -287,8 +291,11 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
                     }
                 });
 
-        final Handler handler = new Handler();
-        final Runnable runnable = new Runnable() {
+        mClusterManager.getMarkerCollection().setOnInfoWindowAdapter(
+                new MyCustomAdapterForItems());
+
+        handler = new Handler();
+        runnable = new Runnable() {
             public void run() {
                 if (NetworkChangeReceiver.isNetworkAvailable(getBaseContext())) {
                     try {
@@ -296,15 +303,19 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
                     } catch (InterruptedException | ExecutionException e) {
                         e.printStackTrace();
                     }
-                    mClusterManager.getMarkerCollection().setOnInfoWindowAdapter(
-                            new MyCustomAdapterForItems());
-                    mClusterManager.cluster();
                 }
                 handler.postDelayed(this, 5000);
             }
         };
         handler.post(runnable);
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        handler.removeCallbacks(runnable);
+
+        super.onDestroy();
     }
 
     //-------------------- START Permission Access Fine Location --------------------//
@@ -539,12 +550,12 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
                 mSingleStar.setVisibility(View.VISIBLE);
 
             if (dagangan.getTipeDagangan() == Boolean.FALSE) {
-                imageLoader.displayImage("drawable://" + R.drawable.icon_diam, mSingleIcon);
+                mSingleIcon.setImageResource(R.drawable.icon_diam);
                 if (dagangan.getStatusBerjualan() == Boolean.TRUE)
                     mSingleFrame.setBackgroundResource(R.color.colorOnline);
                 else mSingleFrame.setBackgroundResource(R.color.colorOffline);
             } else {
-                imageLoader.displayImage("drawable://" + R.drawable.icon_berjalan, mSingleIcon);
+                mSingleIcon.setImageResource(R.drawable.icon_berjalan);
                 mSingleFrame.setBackgroundResource(R.color.colorOnline);
             }
             Bitmap icon = mIconGenerator.makeIcon();
@@ -597,18 +608,23 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
         return true;
     }
 
-    public class getDagangan extends AsyncTask<Void, Void, Void> {
+    public class getDagangan extends AsyncTask<Void, Void, ArrayList<Dagangan>> {
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected void onPreExecute() {
+            super.onPreExecute();
             mClusterManager.clearItems();
+            Log.i("test","clear");
+            Log.i("test",mClusterManager.getClusterMarkerCollection().getMarkers().toString());
+        }
+
+        @Override
+        protected ArrayList<Dagangan> doInBackground(Void... voids) {
             ArrayList<Dagangan> listDagangan = new ArrayList<>();
             OkHttpClient client;
-            OkHttpClient.Builder okBuilder = new OkHttpClient.Builder()
-                    .connectTimeout(10, TimeUnit.SECONDS)
-                    .writeTimeout(10, TimeUnit.SECONDS)
-                    .readTimeout(30, TimeUnit.SECONDS);
+            OkHttpClient.Builder okBuilder = new OkHttpClient.Builder();
             client=okBuilder.build();
             Request.Builder builder = new Request.Builder();
+            builder.cacheControl(new CacheControl.Builder().noCache().noStore().build());
             builder.url("http://carmate.id/index.php/Dagangan_controller/getAllDaganganLocation");
             Request request = builder.build();
 
@@ -623,27 +639,35 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
                 for (int i = 0; i < Jobject.length(); i++) {
                     JSONObject c = null;
                     Dagangan dagangan = new Dagangan();
-
-                        c = Jobject.getJSONObject(i);
-                        dagangan.setIdDagangan(c.getString("idDagangan"));
-                        dagangan.setNamaDagangan(c.getString("namaDagangan"));
-                        dagangan.setFotoDagangan(c.getString("fotoDagangan"));
-                        dagangan.setLatDagangan(c.getDouble("latDagangan"));
-                        dagangan.setLngDagangan(c.getDouble("lngDagangan"));
-                        dagangan.setMeanPenilaianDagangan((int) c.getDouble("meanPenilaianDagangan"));
-                        dagangan.setCountPenilaianDagangan(c.getInt("countPenilaianDagangan"));
-                        dagangan.setStatusRecommendation(c.getBoolean("statusRecommendation"));
-                        dagangan.setStatusBerjualan(c.getBoolean("statusBerjualan"));
-                        dagangan.setTipeDagangan(c.getBoolean("tipeDagangan"));
+                    c = Jobject.getJSONObject(i);
+                    dagangan.setIdDagangan(c.getString("idDagangan"));
+                    dagangan.setNamaDagangan(c.getString("namaDagangan"));
+                    dagangan.setFotoDagangan(c.getString("fotoDagangan"));
+                    dagangan.setLatDagangan(c.getDouble("latDagangan"));
+                    Log.i("test-lat", String.valueOf(c.getDouble("latDagangan")));
+                    dagangan.setLngDagangan(c.getDouble("lngDagangan"));
+                    Log.i("test-lng", String.valueOf(c.getDouble("lngDagangan")));
+                    dagangan.setMeanPenilaianDagangan((int) c.getDouble("meanPenilaianDagangan"));
+                    dagangan.setCountPenilaianDagangan(c.getInt("countPenilaianDagangan"));
+                    dagangan.setStatusRecommendation(c.getBoolean("statusRecommendation"));
+                    dagangan.setStatusBerjualan(c.getBoolean("statusBerjualan"));
+                    dagangan.setTipeDagangan(c.getBoolean("tipeDagangan"));
 
                     listDagangan.add(dagangan);
                 }
+
+                response.body().close();
             } catch (JSONException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            return listDagangan;
+        }
 
+        @Override
+        protected void onPostExecute(ArrayList<Dagangan> listDagangan) {
+            super.onPostExecute(listDagangan);
             for (Dagangan dagangan : listDagangan) {
                 if (dagangan.getTipeDagangan() == Boolean.FALSE) {
                     if (dagangan.getStatusBerjualan() == Boolean.TRUE)
@@ -655,9 +679,10 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
                     if (dagangan.getStatusBerjualan() == Boolean.TRUE)
                         mClusterManager.addItem(dagangan);
                 }
-
             }
-            return null;
+            mClusterManager.cluster();
+            Log.i("test","berhasil "+listDagangan.toString());
+            Log.i("test",mClusterManager.getClusterMarkerCollection().getMarkers().toString());
         }
     }
     //-------------------- END Marker Cluster --------------------//

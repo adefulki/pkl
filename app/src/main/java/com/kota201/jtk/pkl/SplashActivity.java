@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 
+import com.kota201.jtk.pkl.service.UserLocationUpdate;
 import com.onesignal.OneSignal;
 
 import butterknife.BindString;
@@ -29,6 +30,8 @@ public class SplashActivity extends Activity{
                 .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
                 .unsubscribeWhenNotificationsAreDisabled(true)
                 .init();
+
+        startService(new Intent(this, UserLocationUpdate.class));
 
         new Handler().postDelayed(
                 new Runnable() {

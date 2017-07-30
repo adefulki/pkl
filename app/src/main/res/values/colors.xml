@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#8BC34A</color>
-    <color name="colorPrimaryTransparent">#108BC34A</color>
-    <color name="colorPrimaryLight">#AED581</color>
-    <color name="colorPrimaryLighter">#DCEDC8</color>
-    <color name="colorPrimaryDark">#689F38</color>
-    <color name="colorPrimaryDarker">#33691E</color>
+    <color name="colorPrimary">#009688</color>
+    <color name="colorPrimaryTransparent">#10009688</color>
+    <color name="colorPrimaryLight">#4DB6AC</color>
+    <color name="colorPrimaryLighter">#B2DFDB</color>
+    <color name="colorPrimaryDark">#00796B</color>
+    <color name="colorPrimaryDarker">#004D40</color>
 
-    <color name="colorSecondary">#673AB7</color>
-    <color name="colorSecondaryLight">#9575CD</color>
-    <color name="colorSecondaryLighter">#D1C4E9</color>
-    <color name="colorSecondaryDark">#512DA8</color>
-    <color name="colorSecondaryDarker">#311B92</color>
-
-    <color name="colorAccent">#FFF</color>
+    <color name="colorAccent">#607D8B</color>
+    <color name="colorSecondary">#607D8B</color>
+    <color name="colorSecondaryTransparent">#10607D8B</color>
+    <color name="colorSecondaryLight">#90A4AE</color>
+    <color name="colorSecondaryLighter">#CFD8DC</color>
+    <color name="colorSecondaryDark">#455A64</color>
+    <color name="colorSecondaryDarker">#263238</color>
 
     <color name="black">#000000</color>
     <color name="jet">#222222</color>
@@ -25,6 +25,6 @@
     <color name="iron">#CCCCCC</color>
     <color name="white">#FFFFFF</color>
 
-    <color name="colorOnline">#8BC34A</color>
+    <color name="colorOnline">#4CAF50</color>
     <color name="colorOffline">#F44336</color>
 </resources>

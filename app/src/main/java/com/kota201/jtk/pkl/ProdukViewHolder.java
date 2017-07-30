@@ -6,24 +6,23 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by AdeFulki on 7/20/2017.
  */
 
 public class ProdukViewHolder extends RecyclerView.ViewHolder{
-    ImageView fotoProduk;
-    TextView namaProduk;
-    TextView deskripsiProduk;
-    TextView hargaProduk;
-    TextView satuanProduk;
-    ImageButton editButton;
+    @BindView(R.id.fotoProduk) ImageView fotoProduk;
+    @BindView(R.id.namaProduk) TextView namaProduk;
+    @BindView(R.id.deskripsiProduk) TextView deskripsiProduk;
+    @BindView(R.id.hargaProduk) TextView hargaProduk;
+    @BindView(R.id.satuanProduk) TextView satuanProduk;
+    @BindView(R.id.btnEdit) ImageButton btnEdit;
+    @BindView(R.id.btnDelete) ImageButton btnDelete;
     public ProdukViewHolder(View itemView) {
         super(itemView);
-        fotoProduk = (ImageView) itemView.findViewById(R.id.fotoProduk);
-        namaProduk= (TextView) itemView.findViewById(R.id.namaProduk);
-        deskripsiProduk= (TextView) itemView.findViewById(R.id.deskripsiProduk);
-        hargaProduk= (TextView) itemView.findViewById(R.id.hargaProduk);
-        satuanProduk= (TextView) itemView.findViewById(R.id.satuanProduk);
-        editButton= (ImageButton) itemView.findViewById(R.id.editButton);
+        ButterKnife.bind(this,itemView);
     }
 }

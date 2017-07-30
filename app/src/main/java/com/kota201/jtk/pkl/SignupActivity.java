@@ -16,7 +16,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.developers.smartytoast.SmartyToast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,6 +30,7 @@ import java.util.concurrent.ExecutionException;
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import info.hoang8f.android.segmented.SegmentedGroup;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -44,7 +46,7 @@ public class SignupActivity extends AppCompatActivity {
     @BindView(R.id.inputReEnterPassword) EditText inputeReEnterPassword;
     @BindView(R.id.btnSignup) Button btnSignup;
     @BindView(R.id.linkLogin) TextView linkLogin;
-    @BindView(R.id.radioGroupRole) RadioGroup radioGroupRole;
+    @BindView(R.id.radioGroupRole) SegmentedGroup radioGroupRole;
     @BindView(R.id.radioBtnPedagang) RadioButton radioBtnPedagang;
     @BindView(R.id.radioBtnPembeli) RadioButton radioBtnPembeli;
     @BindView(R.id.viewRole) TextView viewRole;
@@ -127,6 +129,7 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     public void onSignupSuccess() {
+        SmartyToast.makeText(getBaseContext(),"Registrasi Berhasil",SmartyToast.LENGTH_SHORT,SmartyToast.DONE);
         btnSignup.setEnabled(true);
         SharedPreferences.Editor editor = getSharedPreferences(String.valueOf(R.string.my_prefs), MODE_PRIVATE).edit();
         editor.putString("noPonsel", inputNoPonsel.getText().toString());
@@ -156,7 +159,7 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     public void onSignupFailed() {
-        Toast.makeText(getBaseContext(), "Registrasi gagal", Toast.LENGTH_LONG).show();
+        SmartyToast.makeText(getBaseContext(),"Registrasi Gagal",SmartyToast.LENGTH_SHORT,SmartyToast.ERROR);
         btnSignup.setEnabled(true);
     }
 

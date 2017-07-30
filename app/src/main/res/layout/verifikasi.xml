@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="35dp"
         android:text="6 digit Kode akses telah dikirimkan melalui pesan kepada nomor ponsel +62*******"
-        android:textColor="@color/colorAccent"
+        android:textColor="@color/white"
         android:layout_marginLeft="100dp"
         android:textAlignment="center"
         android:layout_alignParentTop="true"
@@ -24,7 +24,7 @@
         android:layout_marginLeft="100dp"
         android:text="Masukan Kode Akses yang Anda dapat untuk validasi nomor ponsel Anda"
         android:textAlignment="center"
-        android:textColor="@color/colorAccent"
+        android:textColor="@color/white"
         android:layout_marginTop="48dp"
         android:layout_below="@+id/btnKirimUlang"
         android:layout_centerHorizontal="true" />
@@ -41,16 +41,18 @@
         android:backgroundTint="@color/colorPrimary"/>
 
     <com.alimuzaffar.lib.pin.PinEntryEditText
-        android:id="@+id/kodeAkses"
+        android:id="@+id/inputKodeAkses"
         android:layout_width="match_parent"
         android:layout_height="90dp"
         android:cursorVisible="false"
-        app:pinLineColors="@color/colorAccent"
+        app:pinLineColors="@color/white"
         app:pinBackgroundIsSquare="true"
         app:pinLineStrokeSelected="2dp"
         app:pinLineStroke="1dp"
+        app:pinTextBottomPadding="3dp"
         android:textSize="50sp"
-        android:textColor="@color/colorPrimaryDarker"
+        android:maxLength="4"
+        android:textColor="@color/white"
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
         android:layout_below="@+id/textView2"
@@ -62,8 +64,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="26dp"
         android:text="Cek kode akses"
-        android:textColor="@color/colorAccent"
-        android:backgroundTint="@color/colorPrimaryDark"
-        android:layout_below="@+id/kodeAkses"
+        android:textColor="@color/colorPrimary"
+        android:backgroundTint="@color/white"
+        android:layout_below="@+id/inputKodeAkses"
         android:layout_centerHorizontal="true" />
 </RelativeLayout>

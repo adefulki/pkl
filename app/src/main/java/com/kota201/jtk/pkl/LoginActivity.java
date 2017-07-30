@@ -1,11 +1,8 @@
 package com.kota201.jtk.pkl;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,8 +11,8 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
+import com.developers.smartytoast.SmartyToast;
 import com.kota201.jtk.pkl.service.NetworkChangeReceiver;
 
 import org.json.JSONException;
@@ -116,6 +113,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onLoginSuccess() {
         String noPonsel = inputNoPonsel.getText().toString();
+        SmartyToast.makeText(getBaseContext(),"Login Berhasil",SmartyToast.LENGTH_SHORT,SmartyToast.DONE);
         if(role == 0){
             //jika pedagang
             SharedPreferences.Editor editor = getSharedPreferences(my_prefs, MODE_PRIVATE).edit();
@@ -134,7 +132,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void onLoginFailed() {
-        Toast.makeText(getBaseContext(), "Login gagal", Toast.LENGTH_LONG).show();
+        SmartyToast.makeText(getBaseContext(),"Login Gagal",SmartyToast.LENGTH_SHORT,SmartyToast.ERROR);
         btnLogin.setEnabled(true);
     }
 
@@ -276,19 +274,4 @@ public class LoginActivity extends AppCompatActivity {
             progressDialog.dismiss();
         }
     }
-
-    //Network
-    public boolean isOnline(Context c) {
-        ConnectivityManager cm = (ConnectivityManager) c
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo ni = cm.getActiveNetworkInfo();
-
-        if (ni != null && ni.isConnected())
-            return true;
-        else
-            return false;
-    }
-
-
-
 }

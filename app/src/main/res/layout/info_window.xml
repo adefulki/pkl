@@ -18,7 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="10dp"
-        android:textColor="@color/colorAccent"
+        android:textColor="@color/white"
         android:textAppearance="?attr/textAppearanceListItem"
         android:textSize="16sp"
         android:text="Nama Dagangan"
@@ -47,6 +47,6 @@
         android:layout_alignBottom="@+id/nilaiPenilaian"
         android:layout_toEndOf="@+id/nilaiPenilaian"
         android:layout_below="@+id/daftar_judul"
-        android:textColor="@color/colorAccent"/>
+        android:textColor="@color/white"/>
 
 </RelativeLayout>

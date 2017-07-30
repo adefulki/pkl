@@ -44,17 +44,26 @@
                     android:layout_height="wrap_content"
                     android:padding="16dp"
                     android:text="Nama Produk"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/white"
                     android:textStyle="bold" />
             </LinearLayout>
 
             <ImageButton
-                android:id="@+id/editButton"
+                android:id="@+id/btnEdit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="11dp"
                 android:backgroundTint="@color/colorSecondary"
                 app:srcCompat="@drawable/ic_edit" />
+
+            <ImageButton
+                android:id="@+id/btnDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="11dp"
+                android:layout_marginTop="50dp"
+                android:backgroundTint="@color/colorSecondary"
+                app:srcCompat="@drawable/ic_clear" />
         </FrameLayout>
 
         <RelativeLayout
@@ -75,22 +84,32 @@
                 android:textColor="@color/iron" />
 
             <TextView
+                android:id="@+id/textView8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rp."
+                android:textColor="@color/white"
+                android:layout_above="@+id/textView2"
+                android:layout_alignStart="@+id/textView3"/>
+
+            <TextView
                 android:id="@+id/hargaProduk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/textView3"
                 android:layout_below="@+id/textView3"
                 android:layout_marginRight="5dp"
                 android:layout_marginTop="5dp"
+                android:layout_marginLeft="5dp"
                 android:text="Harga Produk"
-                android:textColor="@color/colorAccent" />
+                android:textColor="@color/white"
+                android:layout_toEndOf="@+id/textView8"/>
 
             <TextView
                 android:id="@+id/textView7"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="/"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/white"
                 android:layout_marginLeft="5dp"
                 android:layout_above="@+id/textView2"
                 android:layout_toEndOf="@+id/hargaProduk" />
@@ -103,7 +122,7 @@
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="5dp"
                 android:text="Satuam Produk"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/white"
                 android:layout_alignBaseline="@+id/textView7"
                 android:layout_alignBottom="@+id/textView7"
                 android:layout_toEndOf="@+id/textView7" />
@@ -130,7 +149,7 @@
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="5dp"
                 android:text="Deskripsi Produk"
-                android:textColor="@color/colorAccent" />
+                android:textColor="@color/white" />
         </RelativeLayout>
     </LinearLayout>
 </android.support.v7.widget.CardView>

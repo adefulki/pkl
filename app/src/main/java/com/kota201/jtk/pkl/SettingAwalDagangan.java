@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.developers.smartytoast.SmartyToast;
 import com.iceteck.silicompressorr.SiliCompressor;
@@ -47,6 +46,7 @@ import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Created by AdeFulki on 7/18/2017.
@@ -54,10 +54,10 @@ import okhttp3.RequestBody;
 
 public class SettingAwalDagangan extends AppCompatActivity implements IPickResult {
 
-    @BindView(R.id.namaDagangan)
-    EditText namaDagangan;
-    @BindView(R.id.deskripsiDagangan)
-    EditText deskripsiDagangan;
+    @BindView(R.id.inputNamaDagangan)
+    EditText inputNamaDagangan;
+    @BindView(R.id.inputDeskripsiDagangan)
+    EditText inputDeskripsiDagangan;
     @BindView(R.id.fotoDagangan)
     ImageView fotoDagangan;
     @BindView(R.id.tipeDagangan)
@@ -66,11 +66,13 @@ public class SettingAwalDagangan extends AppCompatActivity implements IPickResul
     Button btnSelesai;
 
     private String id;
+    private String idDagangan;
     private ImageLoader imageLoader;
     private Uri imageUri;
     private ProgressDialog prg;
-    private Boolean tipe;
+    private Boolean tipe=false;
     private SharedPreferences prefs;
+    private SharedPreferences.Editor prefsEditor;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,7 +85,9 @@ public class SettingAwalDagangan extends AppCompatActivity implements IPickResul
         getSupportActionBar().setTitle("Pengaturan Awal Dagangan");
 
         prefs = getSharedPreferences(String.valueOf(R.string.my_prefs), MODE_PRIVATE);
+        prefsEditor = getSharedPreferences(String.valueOf(R.string.my_prefs), MODE_PRIVATE).edit();
         id = prefs.getString("id", null);
+        Log.i("test-idpedagang",id);
 
         fotoDagangan.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,8 +129,8 @@ public class SettingAwalDagangan extends AppCompatActivity implements IPickResul
                         "Kam1selalu1",
                         "assets/image/",
                         id,
-                        namaDagangan.getText().toString(),
-                        deskripsiDagangan.getText().toString(),
+                        inputNamaDagangan.getText().toString(),
+                        inputDeskripsiDagangan.getText().toString(),
                         tipe).execute();
                 try {
                     Log.i("test",uploadTask.get());
@@ -181,12 +185,22 @@ public class SettingAwalDagangan extends AppCompatActivity implements IPickResul
         @Override
         protected void onPreExecute(){
             super.onPreExecute();
-            prg = new ProgressDialog(SettingAwalDagangan.this);
-            prg.setMessage("Uploading...");
+            prg = new ProgressDialog(SettingAwalDagangan.this,
+                    R.style.AppTheme_Dark_Dialog);
+            prg.setIndeterminate(true);
+            prg.setMessage("Menambah Info Dagangan...");
             prg.show();
         }
         @Override
         protected String doInBackground(Void... params) {
+
+            try {
+                // Simulate network access.
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                return null;
+            }
+
             FTPClient client = new FTPClient();
 
             try {
@@ -211,6 +225,8 @@ public class SettingAwalDagangan extends AppCompatActivity implements IPickResul
                 }
                 client.upload(imageFile);
 
+                Log.i("test-image","uploaded");
+
                 try {
                     // Simulate network access.
                     Thread.sleep(2000);
@@ -231,6 +247,8 @@ public class SettingAwalDagangan extends AppCompatActivity implements IPickResul
                     e.printStackTrace();
                 }
 
+                Log.i("test-json","created");
+
                 assert dataToSend != null;
 
                 MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -248,7 +266,7 @@ public class SettingAwalDagangan extends AppCompatActivity implements IPickResul
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                Log.i("asik","selesai request");
+                Log.i("test-call","selesai request");
 
                 return new String("Upload Successful");
             } catch (Exception e) {
@@ -267,19 +285,29 @@ public class SettingAwalDagangan extends AppCompatActivity implements IPickResul
         protected void onPostExecute(String str) {
             prg.dismiss();
             btnSelesai.setEnabled(true);
+            try {
+                idDagangan = new getIdDagangnTask(id).execute().get();
+                prefsEditor.putString("idDagangan", idDagangan);
+                prefsEditor.apply();
+                Log.i("test-idDagangan", prefs.getString("idDagangan", null));
+
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
             if (!tipe){
                 startActivity(new Intent(SettingAwalDagangan.this, SettingLokasiPedagang.class));
             }else
                 startActivity(new Intent(SettingAwalDagangan.this, SettingProdukDagangan.class));
+            //finish();
         }
     }
 
     public boolean validate() {
         boolean valid = true;
-        String nama = namaDagangan.getText().toString();
+        String nama = inputNamaDagangan.getText().toString();
 
         if(nama.isEmpty()){
-            namaDagangan.setError("Nama tidak boleh kosong");
+            inputNamaDagangan.setError("Nama tidak boleh kosong");
             valid = false;
         }
 
@@ -287,7 +315,7 @@ public class SettingAwalDagangan extends AppCompatActivity implements IPickResul
     }
 
     public void failed() {
-        Toast.makeText(getBaseContext(), "gagal", Toast.LENGTH_LONG).show();
+        SmartyToast.makeText(getApplicationContext(),"Gagal",SmartyToast.LENGTH_SHORT,SmartyToast.ERROR);
         btnSelesai.setEnabled(true);
     }
 
@@ -297,5 +325,59 @@ public class SettingAwalDagangan extends AppCompatActivity implements IPickResul
             onBackPressed();
         }
         return super.onOptionsItemSelected(menuItem);
+    }
+
+    class getIdDagangnTask extends AsyncTask<Void, Void, String> {
+
+        private final String mId;
+
+        getIdDagangnTask(String id) {
+
+            mId = id;
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+
+            try {
+
+                JSONObject dataToSend = null;
+                try {
+                    dataToSend = new JSONObject()
+                            .put("idPedagang", mId);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                assert dataToSend != null;
+
+                MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
+                //Create request object
+                Request request = new Request.Builder()
+                        .url("http://carmate.id/index.php/Dagangan_controller/getIdDaganganByIdPedagang")
+                        .post(RequestBody.create(JSON, dataToSend.toString()))
+                        .build();
+
+                OkHttpClient okClient = new OkHttpClient();
+                //Make the request
+                String jsonData;
+                JSONObject Jobject;
+                try {
+                    Response response = okClient.newCall(request).execute();
+                    jsonData = response.body().string();
+                    Jobject = new JSONObject(jsonData);
+                    return Jobject.getString("idDagangan");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Log.i("asik", "selesai request");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 }

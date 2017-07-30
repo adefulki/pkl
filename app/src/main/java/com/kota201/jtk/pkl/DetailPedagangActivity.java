@@ -10,9 +10,15 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.kota201.jtk.pkl.fragment.PenilaianDetailPedagangFragment;
 import com.kota201.jtk.pkl.fragment.ProdukDetailPedagangFragment;
 import com.kota201.jtk.pkl.fragment.TentangDetailPedagangFragment;
@@ -29,6 +35,8 @@ public class DetailPedagangActivity extends AppCompatActivity implements OnMapRe
     private Toolbar toolbar;
     private ViewPager viewPager;
     private TabLayout tabLayout;
+    private GoogleMap mMap;
+    private UiSettings mUiSettings;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,11 +46,8 @@ public class DetailPedagangActivity extends AppCompatActivity implements OnMapRe
         //Initialize toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        toolbar.setTitle("Doctor Strange");
-
         setSupportActionBar(toolbar);
         //Show "back" button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
@@ -54,7 +59,8 @@ public class DetailPedagangActivity extends AppCompatActivity implements OnMapRe
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        //FloatingActionsMenu rightLabels = (FloatingActionsMenu) findViewById(R.id.right_labels);
+        FloatingActionMenu fMenu = (FloatingActionMenu) findViewById(R.id.menu);
+        FloatingActionButton fButton1 = (FloatingActionButton) findViewById(R.id.menu_item1);
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -67,7 +73,13 @@ public class DetailPedagangActivity extends AppCompatActivity implements OnMapRe
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
+        mMap = googleMap;
+        mUiSettings = mMap.getUiSettings();
+        mUiSettings.setAllGesturesEnabled(false);
+        LatLng latLng = new LatLng(-33.867, 151.206);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+        mMap.addMarker(new MarkerOptions()
+                .position(latLng));
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {

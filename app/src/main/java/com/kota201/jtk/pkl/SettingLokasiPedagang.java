@@ -19,14 +19,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutionException;
 
-import it.sauronsoftware.ftp4j.FTPClient;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 
 /**
  * Created by AdeFulki on 7/19/2017.
@@ -40,27 +37,18 @@ public class SettingLokasiPedagang extends AppCompatActivity{
     private String address;
     private String postalcode;
     private String idDagangan;
-    private SharedPreferences prefs;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        prefs = getSharedPreferences(String.valueOf(R.string.my_prefs), MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences(String.valueOf(R.string.my_prefs), MODE_PRIVATE);
         id = prefs.getString("id", null);
-
-        try {
-            idDagangan = new getIdDagangnTask(id).execute().get();
-            prefs.edit().putString("idDagangan", idDagangan);
-            prefs.edit().apply();
-
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+        idDagangan = prefs.getString("idDagangan", null);
 
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Location location = null;
-        if (ActivityCompat.checkSelfPermission(SettingLokasiPedagang.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(SettingLokasiPedagang.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(getBaseContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getBaseContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -77,7 +65,7 @@ public class SettingLokasiPedagang extends AppCompatActivity{
                 .withLocation(latitude, longitude)
                 .shouldReturnOkOnBackPressed()
                 .withSatelliteViewHidden()
-                .build(getApplicationContext());
+                .build(SettingLokasiPedagang.this);
 
         startActivityForResult(intent, 1);
     }
@@ -97,11 +85,15 @@ public class SettingLokasiPedagang extends AppCompatActivity{
 
                 new updateLokasiTask(idDagangan, latitude, longitude).execute();
 
+                Log.i("test-lokasi","berhasil");
                 startActivity(new Intent(SettingLokasiPedagang.this, SettingProdukDagangan.class));
+                finish();
             }
             if (resultCode == RESULT_CANCELED) {
+                Log.i("test-lokasi","gagal");
                 //Write your code if there's no result
                 startActivity(new Intent(SettingLokasiPedagang.this, null));
+                finish();
             }
         }
     }
@@ -121,15 +113,14 @@ public class SettingLokasiPedagang extends AppCompatActivity{
 
         @Override
         protected Void doInBackground(Void... params) {
-            FTPClient client = new FTPClient();
 
             try {
                 JSONObject dataToSend = null;
                 try {
                     dataToSend = new JSONObject()
                             .put("idDagangan", mIdDagangan)
-                            .put("namaDagangan", mLatDagangan)
-                            .put("deskripsiDagangan", mLngDagangan);
+                            .put("latDagangan", mLatDagangan)
+                            .put("lngDagangan", mLngDagangan);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -141,7 +132,7 @@ public class SettingLokasiPedagang extends AppCompatActivity{
 
                 //Create request object
                 Request request = new Request.Builder()
-                        .url("http://carmate.id/index.php/Dagangan_controller/updateLokasiDagangan")
+                        .url("http://carmate.id/index.php/Dagangan_controller/setLokasiBerdagang")
                         .post(RequestBody.create(JSON, dataToSend.toString()))
                         .build();
 
@@ -149,61 +140,6 @@ public class SettingLokasiPedagang extends AppCompatActivity{
                 //Make the request
                 try {
                     okClient.newCall(request).execute();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                Log.i("asik", "selesai request");
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-    }
-
-    class getIdDagangnTask extends AsyncTask<Void, Void, String> {
-
-        private final String mId;
-
-        getIdDagangnTask(String id) {
-
-            mId = id;
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            FTPClient client = new FTPClient();
-
-            try {
-
-                JSONObject dataToSend = null;
-                try {
-                    dataToSend = new JSONObject()
-                            .put("idPedagang", mId);
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                assert dataToSend != null;
-
-                MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-
-                //Create request object
-                Request request = new Request.Builder()
-                        .url("http://carmate.id/index.php/Dagangan_controller/getIdDaganganByIdPedagang")
-                        .post(RequestBody.create(JSON, dataToSend.toString()))
-                        .build();
-
-                OkHttpClient okClient = new OkHttpClient();
-                //Make the request
-                String jsonData;
-                JSONObject Jobject;
-                try {
-                    Response response = okClient.newCall(request).execute();
-                    jsonData = response.body().string();
-                    Jobject = new JSONObject(jsonData);
-                    return Jobject.getString("idDagangan");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
