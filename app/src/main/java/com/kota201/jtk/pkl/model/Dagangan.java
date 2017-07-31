@@ -18,6 +18,7 @@ public class Dagangan implements ClusterItem {
     private int countPenilaianDagangan;
     private Boolean statusRecommendation;
     private Boolean statusBerjualan;
+    private Boolean statusNotifikasi;
     private Boolean tipeDagangan;
     private int countPelanggan;
     private Boolean statusBerlangganan;
@@ -128,5 +129,13 @@ public class Dagangan implements ClusterItem {
 
     public void setStatusBerlangganan(Boolean statusBerlangganan) {
         this.statusBerlangganan = statusBerlangganan;
+    }
+
+    public Boolean getStatusNotifikasi() {
+        return statusNotifikasi;
+    }
+
+    public void setStatusNotifikasi(Boolean statusNotifikasi) {
+        this.statusNotifikasi = statusNotifikasi;
     }
 }

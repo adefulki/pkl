@@ -1,18 +1,18 @@
 package com.kota201.jtk.pkl;
 
 import android.content.Context;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.kota201.jtk.pkl.model.Produk;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,8 +21,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -61,44 +59,28 @@ public class PilihProdukAdapter extends RecyclerView.Adapter<PilihProdukViewHold
         holder.deskripsiProduk.setText(produk.getDeskripsiProduk());
         holder.hargaProduk.setText(produk.getHargaProduk());
         holder.satuanProduk.setText(produk.getSatuanProduk());
+        DisplayImageOptions options = new DisplayImageOptions.Builder()
+                .displayer(new RoundedBitmapDisplayer((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6, inflater.getContext().getResources().getDisplayMetrics())))
+                .build();
         ImageLoader imageLoader = ImageLoader.getInstance();
-        imageLoader.displayImage("http://carmate.id/assets/image/" + produk.getFotoProduk(), holder.fotoProduk);
+        imageLoader.displayImage("http://carmate.id/assets/image/" + produk.getFotoProduk(), holder.fotoProduk, options);
+        holder.cardView.setOnClickListener(clickListener);
+        holder.cardView.setTag(holder);
     }
 
-    View.OnClickListener editClickListener=new View.OnClickListener() {
-        @BindView(R.id.fotoProduk)
-        ImageView fotoProduk;
-        @BindView(R.id.namaProduk)
-        TextView namaProduk;
-        @BindView(R.id.deskripsiProduk)
-        TextView deskripsiProduk;
-        @BindView(R.id.hargaProduk)
-        TextView hargaProduk;
-        @BindView(R.id.satuanProduk)
-        TextView satuanProduk;
+    View.OnClickListener clickListener=new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
-            View layout = inflater.inflate(R.layout.dialog_produk, (ViewGroup) v.findViewById(R.id.container));
-            ButterKnife.bind(this,layout);
-
-            //Building dialog
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setView(layout);
-            builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                    //save info where you want it
-                }
-            });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            AlertDialog dialog = builder.create();
+            //member aksi saat cardview diklik berdasarkan posisi tertentu
+            PilihProdukViewHolder vholder = (PilihProdukViewHolder) v.getTag();
+            int position = vholder.getPosition();
+            Produk produk = listProduk.get(position);
+            Intent intent;
+            intent = new Intent(context, PenilaianProduk.class);
+            intent.putExtra("idProduk", produk.getIdProduk());
+            intent.putExtra("namaProduk", produk.getNamaProduk());
+            intent.putExtra("fotoProduk", produk.getFotoProduk());
+            context.startActivity(intent);
         }
     };
 

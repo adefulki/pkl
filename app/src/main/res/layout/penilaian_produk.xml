@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary">
+    android:background="@color/white_alpha">
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -16,58 +16,51 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <ImageView
-                android:id="@+id/fotoDagangan"
+                android:id="@+id/fotoProduk"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_margin="10dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/img_produk1" />
             <TextView
+                android:id="@+id/namaProduk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Martabak Coklat Kacang"
                 android:layout_centerVertical="true"
-                android:layout_toEndOf="@+id/fotoDagangan"
-                android:textColor="@color/colorAccent"
+                android:layout_toEndOf="@+id/fotoProduk"
+                android:textColor="@color/colorPrimaryDark"
                 android:textSize="18sp"/>
         </RelativeLayout>
 
         <RatingBar
-            android:id="@+id/nilaiPenilaian"
-            android:layout_height="40dp"
+            android:id="@+id/inputNilaiPenilaian"
+            android:layout_height="33dp"
             android:layout_width="wrap_content"
             android:numStars="5"
             android:rating="0"
             style="@style/ratingBar2">
         </RatingBar>
 
-        <android.support.design.widget.TextInputLayout
+        <EditText android:id="@+id/inputDeskripsiPenilaian"
+            android:layout_margin="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:textColorHint="@color/colorAccent">
-            <EditText android:id="@+id/deskripsiPenilaian"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:hint="Deskripsi Penilaian"
-                android:minLines="1"
-                android:maxLines="3"
-                android:scrollbars="vertical"
-                android:textColor="@color/colorAccent"
-                android:textColorHint="@color/colorPrimaryDarker"/>
-        </android.support.design.widget.TextInputLayout>
+            android:inputType="text"
+            android:hint="Deskripsi Penilaian"
+            android:textColor="@color/colorPrimary"
+            android:background="@drawable/edit_text_style2"
+            android:textColorHint="@color/colorPrimaryLight"/>
 
         <android.support.v7.widget.AppCompatButton
-            android:id="@+id/btnLogin"
+            android:id="@+id/btnMenilai"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="24dp"
             android:padding="12dp"
             android:text="Menilai"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/white"
             android:backgroundTint="@color/colorPrimaryDark"/>
 
     </LinearLayout>

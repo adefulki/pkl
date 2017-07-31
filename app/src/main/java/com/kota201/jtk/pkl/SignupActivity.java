@@ -27,7 +27,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.ExecutionException;
 
-import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import info.hoang8f.android.segmented.SegmentedGroup;
@@ -50,7 +49,6 @@ public class SignupActivity extends AppCompatActivity {
     @BindView(R.id.radioBtnPedagang) RadioButton radioBtnPedagang;
     @BindView(R.id.radioBtnPembeli) RadioButton radioBtnPembeli;
     @BindView(R.id.viewRole) TextView viewRole;
-    @BindString(R.string.my_prefs) String my_prefs;
 
     ProgressDialog progressDialog;
     String id;

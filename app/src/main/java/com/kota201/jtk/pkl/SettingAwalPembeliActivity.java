@@ -255,7 +255,9 @@ public class SettingAwalPembeliActivity extends AppCompatActivity implements IPi
         protected void onPostExecute(String str) {
             prg.dismiss();
             btnSelesai.setEnabled(true);
-            startActivity(new Intent(SettingAwalPembeliActivity.this, null));
+            Intent intent = new Intent(SettingAwalPembeliActivity.this, LokasiPedagangMemberActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
             finish();
         }
     }

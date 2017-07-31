@@ -21,8 +21,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.ExecutionException;
 
-import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import okhttp3.MediaType;
@@ -40,11 +40,12 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.inputPassword) EditText inputPassword;
     @BindView(R.id.btnLogin) Button btnLogin;
     @BindView(R.id.linkSignup) View linkSignup;
-    @BindString(R.string.my_prefs) String my_prefs;
 
     Boolean statusValid;
     ProgressDialog progressDialog;
     int role;
+    private String id;
+    private String idDagangan;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -114,18 +115,48 @@ public class LoginActivity extends AppCompatActivity {
     public void onLoginSuccess() {
         String noPonsel = inputNoPonsel.getText().toString();
         SmartyToast.makeText(getBaseContext(),"Login Berhasil",SmartyToast.LENGTH_SHORT,SmartyToast.DONE);
-        if(role == 0){
+        if(role == 1){
             //jika pedagang
-            SharedPreferences.Editor editor = getSharedPreferences(my_prefs, MODE_PRIVATE).edit();
-            editor.putInt("Role",0);
-            editor.putString("noPonselPedagang",noPonsel);
+            SharedPreferences.Editor editor = getSharedPreferences(String.valueOf(R.string.my_prefs), MODE_PRIVATE).edit();
+            editor.putInt("role",1);
+            editor.putString("noPonsel",noPonsel);
+
+
+            GetIdPedagangTask getIdPedagangTask = (GetIdPedagangTask) new GetIdPedagangTask().execute(inputNoPonsel.getText().toString());
+            try {
+                id = getIdPedagangTask.get();
+                editor.putString("id", id);
+
+                idDagangan = new getIdDagangnTask(id).execute().get();
+                editor.putString("idDagangan", idDagangan);
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+
             editor.apply();
+
+            Intent intent = new Intent(LoginActivity.this, null);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
         }else{
             //jika pembeli
-            SharedPreferences.Editor editor = getSharedPreferences(my_prefs, MODE_PRIVATE).edit();
-            editor.putInt("Role",1);
-            editor.putString("noPonselPembeli",noPonsel);
+            SharedPreferences.Editor editor = getSharedPreferences(String.valueOf(R.string.my_prefs), MODE_PRIVATE).edit();
+            editor.putInt("role",2);
+            editor.putString("noPonsel",noPonsel);
+
+            GetIdPembeliTask getIdPembeliTask = (GetIdPembeliTask) new GetIdPembeliTask().execute(inputNoPonsel.getText().toString());
+            try {
+                id = getIdPembeliTask.get();
+                editor.putString("id", id);
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+
             editor.apply();
+
+            Intent intent = new Intent(LoginActivity.this, LokasiPedagangMemberActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
         }
         btnLogin.setEnabled(true);
         finish();
@@ -272,6 +303,142 @@ public class LoginActivity extends AppCompatActivity {
         protected void onCancelled() {
             mAuthTask = null;
             progressDialog.dismiss();
+        }
+    }
+
+    public class GetIdPedagangTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            JSONObject dataToSend = null;
+
+            try {
+                dataToSend = new JSONObject()
+                        .put("noPonselPedagang", params[0]);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            assert dataToSend != null;
+
+            MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
+            //Create request object
+            Request request = new Request.Builder()
+                    .url("http://carmate.id/index.php/Pedagang_controller/getIdPedagangByNoPonselPedagang")
+                    .post(RequestBody.create(JSON, dataToSend.toString()))
+                    .build();
+
+            OkHttpClient client = new OkHttpClient();
+            //Make the request
+            String jsonData = null;
+            JSONObject Jobject = null;
+            try {
+                Response response = client.newCall(request).execute();
+                jsonData = response.body().string();
+                Jobject = new JSONObject(jsonData);
+                return Jobject.getString("idPedagang");
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+    }
+
+    public class GetIdPembeliTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            JSONObject dataToSend = null;
+
+            try {
+                dataToSend = new JSONObject()
+                        .put("noPonselPembeli", params[0]);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            assert dataToSend != null;
+
+            MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
+            //Create request object
+            Request request = new Request.Builder()
+                    .url("http://carmate.id/index.php/Pembeli_controller/getIdPembeliByNoPonselPembeli")
+                    .post(RequestBody.create(JSON, dataToSend.toString()))
+                    .build();
+
+            OkHttpClient client = new OkHttpClient();
+            //Make the request
+            String jsonData = null;
+            JSONObject Jobject = null;
+            try {
+                Response response = client.newCall(request).execute();
+                jsonData = response.body().string();
+                Jobject = new JSONObject(jsonData);
+                return Jobject.getString("idPembeli");
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+    }
+
+    class getIdDagangnTask extends AsyncTask<Void, Void, String> {
+
+        private final String mId;
+
+        getIdDagangnTask(String id) {
+
+            mId = id;
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+
+            try {
+
+                JSONObject dataToSend = null;
+                try {
+                    dataToSend = new JSONObject()
+                            .put("idPedagang", mId);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                assert dataToSend != null;
+
+                MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
+                //Create request object
+                Request request = new Request.Builder()
+                        .url("http://carmate.id/index.php/Dagangan_controller/getIdDaganganByIdPedagang")
+                        .post(RequestBody.create(JSON, dataToSend.toString()))
+                        .build();
+
+                OkHttpClient okClient = new OkHttpClient();
+                //Make the request
+                String jsonData;
+                JSONObject Jobject;
+                try {
+                    Response response = okClient.newCall(request).execute();
+                    jsonData = response.body().string();
+                    Jobject = new JSONObject(jsonData);
+                    return Jobject.getString("idDagangan");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Log.i("asik", "selesai request");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
         }
     }
 }

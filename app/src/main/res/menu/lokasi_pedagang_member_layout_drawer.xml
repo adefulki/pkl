@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_beranda"
+            android:icon="@drawable/ic_menu_home"
+            android:title="Beranda" />
+        <item
+            android:id="@+id/nav_berlangganan"
+            android:icon="@drawable/ic_menu_person"
+            android:title="Berlangganan" />
+        <item
+            android:id="@+id/nav_obrolan"
+            android:icon="@drawable/ic_chat"
+            android:title="Obrolan" />
+        <item
+            android:id="@+id/nav_penilaian"
+            android:icon="@drawable/ic_stars"
+            android:title="Penilaian" />
+        <item
+            android:id="@+id/nav_pengaturan_akun"
+            android:icon="@drawable/ic_settings"
+            android:title="Pengaturan Akun" />
+        <item
+            android:id="@+id/nav_keluar"
+            android:icon="@drawable/ic_exit_to_app"
+            android:title="Keluar" />
+    </group>
+
+</menu>

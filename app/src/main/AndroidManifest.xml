@@ -57,6 +57,18 @@
                 android:resource="@xml/searchable"/>
         </activity>
         <activity
+            android:name=".LokasiPedagangMemberActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH"/>
+                <category android:name="android.intent.category.HOME" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
+        </activity>
+        <activity
             android:name=".LoginActivity"
             android:theme="@style/AppTheme2.NoActionBar"/>
         <activity
@@ -68,6 +80,10 @@
             android:launchMode="singleTop"/>
         <activity
             android:name=".VerifikasiActivity"
+            android:theme="@style/AppTheme"
+            android:launchMode="singleTop"/>
+        <activity
+            android:name=".EditVerifikasiActivity"
             android:theme="@style/AppTheme"
             android:launchMode="singleTop"/>
         <activity
@@ -91,8 +107,11 @@
             android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity
+            android:name=".DetailPedagangMemberActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
             android:name=".PilihProduk"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:theme="@style/AppTheme"
             android:launchMode="singleTop"/>
 
         <activity

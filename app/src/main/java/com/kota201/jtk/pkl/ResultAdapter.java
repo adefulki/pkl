@@ -2,8 +2,10 @@ package com.kota201.jtk.pkl;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +27,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by AdeFulki on 7/14/2017.
@@ -95,8 +99,16 @@ public class ResultAdapter extends  RecyclerView.Adapter<ResultViewHolder>{
             ResultViewHolder vholder = (ResultViewHolder) v.getTag();
             int position = vholder.getPosition();
             Search search = listSearch.get(position);
-            Intent intent = new Intent(context, DetailPedagangActivity.class);
-            intent.putExtra("idDagangan", search.getId());
+            SharedPreferences prefs = context.getSharedPreferences(String.valueOf(R.string.my_prefs), MODE_PRIVATE);
+            int role = prefs.getInt("role", 0);
+            Log.i("test-role",String.valueOf(role));
+            Intent intent;
+            if (role == 2){
+                intent = new Intent(context, DetailPedagangMemberActivity.class);
+            }else{
+                intent = new Intent(context, DetailPedagangActivity.class);
+            }
+            intent.putExtra("idDagangan", search.getIdDagangan());
             context.startActivity(intent);
         }
     };
@@ -129,6 +141,7 @@ public class ResultAdapter extends  RecyclerView.Adapter<ResultViewHolder>{
             try {
                 c = Jobject.getJSONObject(i);
                 search.setId(c.getString("id"));
+                search.setIdDagangan(c.getString("idDagangan"));
                 search.setNama(c.getString("nama"));
                 search.setFoto(c.getString("foto"));
                 search.setJarakHaversine(c.getDouble("jarakHaversine"));

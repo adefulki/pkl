@@ -74,6 +74,12 @@ public class DetailProdukAdapter extends RecyclerView.Adapter<DetailProdukViewHa
         holder.bintangEmpat.setText(String.valueOf(count4));
         holder.bintangLima.setText(String.valueOf(count5));
 
+        holder.progressBarBintangSatu.setMax(100);
+        holder.progressBarBintangDua.setMax(100);
+        holder.progressBarBintangTiga.setMax(100);
+        holder.progressBarBintangEmpat.setMax(100);
+        holder.progressBarBintangLima.setMax(100);
+
         if (count1!=0)
         holder.progressBarBintangSatu.setProgress((count1/produk.getCountPenilaianProduk())*100);
         if (count2!=0)
@@ -84,6 +90,8 @@ public class DetailProdukAdapter extends RecyclerView.Adapter<DetailProdukViewHa
         holder.progressBarBintangEmpat.setProgress((count4/produk.getCountPenilaianProduk())*100);
         if (count5!=0)
         holder.progressBarBintangLima.setProgress((count5/produk.getCountPenilaianProduk())*100);
+
+
 
         holder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Location;
@@ -37,6 +38,7 @@ import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.developers.smartytoast.SmartyToast;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -54,7 +56,10 @@ import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.kota201.jtk.pkl.model.Dagangan;
+import com.kota201.jtk.pkl.restful.PostMethod;
 import com.kota201.jtk.pkl.service.NetworkChangeReceiver;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -129,7 +134,7 @@ public class LokasiPedagangMemberActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         log.info("onCreate() intent:{}", getIntent());
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.lokasi_pedagang);
+        setContentView(R.layout.lokasi_pedagang_member);
 
         ButterKnife.bind(this);
 
@@ -226,12 +231,27 @@ public class LokasiPedagangMemberActivity extends AppCompatActivity implements
 
         if (id == R.id.nav_beranda) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if (id == R.id.nav_login) {
-            startActivity(new Intent(LokasiPedagangMemberActivity.this, LoginActivity.class));
-        } else if (id == R.id.nav_registrasi) {
-            startActivity(new Intent(LokasiPedagangMemberActivity.this, SignupActivity.class));
-        } else if (id == R.id.nav_tentang) {
-            startActivity(new Intent(LokasiPedagangMemberActivity.this, DetailPedagangActivity.class));
+        } else if (id == R.id.nav_berlangganan) {
+            startActivity(new Intent(LokasiPedagangMemberActivity.this, null));
+        } else if (id == R.id.nav_obrolan) {
+            startActivity(new Intent(LokasiPedagangMemberActivity.this, PenilaianProduk.class));
+        } else if (id == R.id.nav_penilaian) {
+            IntentIntegrator integrator = new IntentIntegrator(this);
+            integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
+            integrator.setPrompt("Pindai QrCode Pedagang");
+            integrator.setCameraId(0);
+            integrator.setBeepEnabled(true);
+            integrator.setBarcodeImageEnabled(true);
+            integrator.setOrientationLocked(false);
+            integrator.initiateScan();
+        }else if (id == R.id.nav_pengaturan_akun) {
+            startActivity(new Intent(LokasiPedagangMemberActivity.this, SettingAkunPembeli.class));
+        }else if (id == R.id.nav_keluar) {
+            SharedPreferences settings = getSharedPreferences(String.valueOf(R.string.my_prefs), Context.MODE_PRIVATE);
+            settings.edit().clear().apply();
+            Intent intent = new Intent(LokasiPedagangMemberActivity.this, LokasiPedagangActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -401,7 +421,7 @@ public class LokasiPedagangMemberActivity extends AppCompatActivity implements
 
     @Override
     public void onClusterItemInfoWindowClick(Dagangan dagangan) {
-        Intent intent = new Intent(LokasiPedagangMemberActivity.this, DetailPedagangActivity.class);
+        Intent intent = new Intent(LokasiPedagangMemberActivity.this, DetailPedagangMemberActivity.class);
         intent.putExtra("idDagangan", dagangan.getIdDagangan());
         startActivity(intent);
     }
@@ -770,4 +790,43 @@ public class LokasiPedagangMemberActivity extends AppCompatActivity implements
     }
     //-------------------- END Search --------------------//
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if(result != null){
+            if(result.getContents()!=null) {
+                Log.i("test-resultQR", result.getContents());
+                if (checkDagangan(result.getContents())) {
+                    String idDagangan = result.getContents();
+                    Log.i("test-resultQR", "berhasil");
+                    Intent intent = new Intent(LokasiPedagangMemberActivity.this, PilihProduk.class);
+                    intent.putExtra("idDagangan", idDagangan);
+                    startActivity(intent);
+                } else {
+                    SmartyToast.makeText(getApplicationContext(), "QrCode Tidak Valid", SmartyToast.LENGTH_SHORT, SmartyToast.ERROR);
+                }
+            }
+        }
+    }
+
+    public Boolean checkDagangan(String id){
+        Boolean status=false;
+        JSONObject dataToSend = null;
+        try {
+            dataToSend = new JSONObject()
+                    .put("idDagangan", id);
+            assert dataToSend != null;
+            PostMethod postMethod = (PostMethod) new PostMethod().execute(
+                    "http://carmate.id/index.php/Dagangan_controller/checkDagangan",
+                    dataToSend.toString()
+            );
+            Log.i("Tahap",postMethod.get());
+            JSONObject Jobject = new JSONObject(postMethod.get());
+            status = Jobject.getBoolean("statusValidDagangan");
+        } catch (JSONException | InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            status = false;
+        }
+        return status;
+    }
 }

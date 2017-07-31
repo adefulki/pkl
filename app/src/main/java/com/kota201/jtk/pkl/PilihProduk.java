@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,14 +29,15 @@ public class PilihProduk extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-
-        toolbar.setTitle("Martabak Bangka");
-
-        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle("Pilih Produk");
 
-        idDagangan = "nhkul5gd7891j";
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            idDagangan = extras.getString("idDagangan");
+            Log.i("test-result",idDagangan);
+        }
 
         JSONObject dataToSend = null;
         try {

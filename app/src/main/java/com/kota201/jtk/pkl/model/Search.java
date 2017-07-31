@@ -6,6 +6,7 @@ package com.kota201.jtk.pkl.model;
 
 public class Search {
     private String id;
+    private String idDagangan;
     private String nama;
     private String foto;
     private Double jarakHaversine;
@@ -40,5 +41,13 @@ public class Search {
 
     public void setJarakHaversine(Double jarakHaversine) {
         this.jarakHaversine = jarakHaversine;
+    }
+
+    public String getIdDagangan() {
+        return idDagangan;
+    }
+
+    public void setIdDagangan(String idDagangan) {
+        this.idDagangan = idDagangan;
     }
 }
