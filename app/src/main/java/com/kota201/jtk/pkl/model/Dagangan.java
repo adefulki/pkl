@@ -10,14 +10,17 @@ import com.google.maps.android.clustering.ClusterItem;
 public class Dagangan implements ClusterItem {
     private String idDagangan;
     private String namaDagangan;
+    private String deskripsiDagangan;
     private String fotoDagangan;
     private Double latDagangan;
     private Double lngDagangan;
     private int meanPenilaianDagangan;
-    private Integer countPenilaianDagangan;
+    private int countPenilaianDagangan;
     private Boolean statusRecommendation;
     private Boolean statusBerjualan;
     private Boolean tipeDagangan;
+    private int countPelanggan;
+    private Boolean statusBerlangganan;
 
     public String getIdDagangan() {
         return idDagangan;
@@ -33,6 +36,14 @@ public class Dagangan implements ClusterItem {
 
     public void setNamaDagangan(String namaDagangan) {
         this.namaDagangan = namaDagangan;
+    }
+
+    public String getDeskripsiDagangan() {
+        return deskripsiDagangan;
+    }
+
+    public void setDeskripsiDagangan(String deskripsiDagangan) {
+        this.deskripsiDagangan = deskripsiDagangan;
     }
 
     public String getFotoDagangan() {
@@ -67,11 +78,11 @@ public class Dagangan implements ClusterItem {
         this.meanPenilaianDagangan = meanPenilaianDagangan;
     }
 
-    public Integer getCountPenilaianDagangan() {
+    public int getCountPenilaianDagangan() {
         return countPenilaianDagangan;
     }
 
-    public void setCountPenilaianDagangan(Integer countPenilaianDagangan) {
+    public void setCountPenilaianDagangan(int countPenilaianDagangan) {
         this.countPenilaianDagangan = countPenilaianDagangan;
     }
 
@@ -103,6 +114,19 @@ public class Dagangan implements ClusterItem {
         return new LatLng(latDagangan, lngDagangan);
     }
 
+    public int getCountPelanggan() {
+        return countPelanggan;
+    }
 
+    public void setCountPelanggan(int countPelanggan) {
+        this.countPelanggan = countPelanggan;
+    }
 
+    public Boolean getStatusBerlangganan() {
+        return statusBerlangganan;
+    }
+
+    public void setStatusBerlangganan(Boolean statusBerlangganan) {
+        this.statusBerlangganan = statusBerlangganan;
+    }
 }

@@ -82,7 +82,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class LokasiPedagangActivity extends AppCompatActivity implements
+public class LokasiPedagangMemberActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
         OnMapReadyCallback,
         LocationListener,
@@ -120,8 +120,8 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
     private Runnable runnable;
 
     static {
-        AndroidLoggerFactory.configureDefaultLogger(LokasiPedagangActivity.class.getPackage());
-        log = LoggerFactory.getLogger(LokasiPedagangActivity.class);
+        AndroidLoggerFactory.configureDefaultLogger(LokasiPedagangMemberActivity.class.getPackage());
+        log = LoggerFactory.getLogger(LokasiPedagangMemberActivity.class);
     }
 
 
@@ -227,11 +227,11 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
         if (id == R.id.nav_beranda) {
             drawer.closeDrawer(GravityCompat.START);
         } else if (id == R.id.nav_login) {
-            startActivity(new Intent(LokasiPedagangActivity.this, LoginActivity.class));
+            startActivity(new Intent(LokasiPedagangMemberActivity.this, LoginActivity.class));
         } else if (id == R.id.nav_registrasi) {
-            startActivity(new Intent(LokasiPedagangActivity.this, SignupActivity.class));
+            startActivity(new Intent(LokasiPedagangMemberActivity.this, SignupActivity.class));
         } else if (id == R.id.nav_tentang) {
-            startActivity(new Intent(LokasiPedagangActivity.this, DetailPedagangActivity.class));
+            startActivity(new Intent(LokasiPedagangMemberActivity.this, DetailPedagangActivity.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -401,7 +401,7 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
 
     @Override
     public void onClusterItemInfoWindowClick(Dagangan dagangan) {
-        Intent intent = new Intent(LokasiPedagangActivity.this, DetailPedagangActivity.class);
+        Intent intent = new Intent(LokasiPedagangMemberActivity.this, DetailPedagangActivity.class);
         intent.putExtra("idDagangan", dagangan.getIdDagangan());
         startActivity(intent);
     }
@@ -718,7 +718,7 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
         String query = String.valueOf(extras.get(SearchManager.QUERY));
         suggestions.saveRecentQuery(query, "");
 
-        intent = new Intent(LokasiPedagangActivity.this, ResultSearchActivity.class);
+        intent = new Intent(LokasiPedagangMemberActivity.this, ResultSearchActivity.class);
         intent.putExtra("query", query);
         intent.putExtra("filter", filter);
         startActivity(intent);

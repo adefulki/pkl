@@ -1,12 +1,12 @@
 package com.kota201.jtk.pkl;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.kota201.jtk.pkl.model.Search;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -78,12 +78,8 @@ public class ResultAdapter extends  RecyclerView.Adapter<ResultViewHolder>{
 
         imageLoader.displayImage("http://carmate.id/assets/image/" + search.getFoto(), holder.imageView2);
 
-        holder.tv1.setOnClickListener(clickListener);
-        holder.tv2.setOnClickListener(clickListener);
-        holder.imageView.setOnClickListener(clickListener);
-        holder.imageView2.setOnClickListener(clickListener);
-        holder.tv1.setTag(holder);
-        holder.imageView.setTag(holder);
+        holder.card_view.setOnClickListener(clickListener);
+        holder.card_view.setTag(holder);
 
     }
 
@@ -98,7 +94,10 @@ public class ResultAdapter extends  RecyclerView.Adapter<ResultViewHolder>{
             //member aksi saat cardview diklik berdasarkan posisi tertentu
             ResultViewHolder vholder = (ResultViewHolder) v.getTag();
             int position = vholder.getPosition();
-            Toast.makeText(context, "Menu ini berada di posisi " + position, Toast.LENGTH_LONG).show();
+            Search search = listSearch.get(position);
+            Intent intent = new Intent(context, DetailPedagangActivity.class);
+            intent.putExtra("idDagangan", search.getId());
+            context.startActivity(intent);
         }
     };
 

@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    android:id="@+id/card_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    app:cardCornerRadius="6dp"
+    app:cardElevation="3dp"
+    app:cardBackgroundColor="@color/colorSecondaryLighter"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@+id/frameImage"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_gravity="center_horizontal">
+
+            <ImageView
+                android:id="@+id/fotoProduk"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_gravity="center"
+                android:scaleType="centerCrop"
+                android:src="@drawable/default3"
+
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|bottom"
+                android:background="@android:drawable/screen_background_dark_transparent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/namaProduk"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="Nama Produk"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/frameImage"
+            android:layout_centerVertical="true"
+            android:background="@color/colorPrimary">
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="20dp"
+                android:text="Harga Produk :"
+                android:textColor="@color/iron" />
+
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/textView2"
+                android:layout_alignStart="@+id/textView3"
+                android:text="Rp."
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/hargaProduk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textView3"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_toEndOf="@+id/textView8"
+                android:text="Harga Produk"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/textView7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/textView2"
+                android:layout_marginLeft="5dp"
+                android:layout_toEndOf="@+id/hargaProduk"
+                android:text="/"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/satuanProduk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/textView7"
+                android:layout_alignBottom="@+id/textView7"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="5dp"
+                android:layout_toEndOf="@+id/textView7"
+                android:text="Satuam Produk"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/deskripsiProduk"
+                android:layout_below="@+id/hargaProduk"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="5dp"
+                android:text="Deskripsi Produk :"
+                android:textColor="@color/iron" />
+
+            <TextView
+                android:id="@+id/deskripsiProduk"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/textView2"
+                android:layout_marginBottom="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="5dp"
+                android:text="Deskripsi Produk"
+                android:textColor="@color/white" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="15dp">
+
+            <LinearLayout
+                android:id="@+id/linearLayout3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/textView5"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/countPenilaianProduk"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="6dp"
+                    android:text="24"
+                    android:textColor="@color/colorPrimaryDark" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Penilaian"
+                    android:textColor="@color/colorPrimaryDark" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/meanPenilaianProduk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/linearLayout3"
+                android:padding="10dp"
+                android:text="4.8"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="60sp"
+                android:visibility="gone"/>
+
+            <LinearLayout
+                android:id="@+id/barPenilaianProduk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignTop="@+id/meanPenilaianProduk"
+                android:layout_toEndOf="@+id/meanPenilaianProduk"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="5 Bintang :"
+                        android:textColor="@color/colorPrimaryDark" />
+
+                    <TextView
+                        android:id="@+id/bintangLima"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="10"
+                        android:textColor="@color/colorPrimaryDark" />
+
+                    <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+                        android:id="@+id/progressBarBintangLima"
+                        android:layout_width="match_parent"
+                        android:layout_height="17dp"
+                        android:layout_marginLeft="5dp"
+                        app:rcBackgroundColor="@color/iron"
+                        app:rcBackgroundPadding="3dp"
+                        app:rcMax="100"
+                        app:rcProgress="30"
+                        app:rcProgressColor="@color/colorPrimaryDark"
+                        app:rcRadius="4dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="4 Bintang :"
+                        android:textColor="@color/colorPrimaryDark" />
+
+                    <TextView
+                        android:id="@+id/bintangEmpat"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="10"
+                        android:textColor="@color/colorPrimaryDark" />
+
+                    <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+                        android:id="@+id/progressBarBintangEmpat"
+                        android:layout_width="match_parent"
+                        android:layout_height="17dp"
+                        android:layout_marginLeft="5dp"
+                        app:rcBackgroundColor="@color/iron"
+                        app:rcBackgroundPadding="3dp"
+                        app:rcMax="100"
+                        app:rcProgress="30"
+                        app:rcProgressColor="@color/colorPrimaryDark"
+                        app:rcRadius="4dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="3 Bintang :"
+                        android:textColor="@color/colorPrimaryDark" />
+
+                    <TextView
+                        android:id="@+id/bintangTiga"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="10"
+                        android:textColor="@color/colorPrimaryDark" />
+
+                    <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+                        android:id="@+id/progressBarBintangTiga"
+                        android:layout_width="match_parent"
+                        android:layout_height="17dp"
+                        android:layout_marginLeft="5dp"
+                        app:rcBackgroundColor="@color/iron"
+                        app:rcBackgroundPadding="3dp"
+                        app:rcMax="100"
+                        app:rcProgress="30"
+                        app:rcProgressColor="@color/colorPrimaryDark"
+                        app:rcRadius="4dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2 Bintang :"
+                        android:textColor="@color/colorPrimaryDark" />
+
+                    <TextView
+                        android:id="@+id/bintangDua"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="10"
+                        android:textColor="@color/colorPrimaryDark" />
+
+                    <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+                        android:id="@+id/progressBarBintangDua"
+                        android:layout_width="match_parent"
+                        android:layout_height="17dp"
+                        android:layout_marginLeft="5dp"
+                        app:rcBackgroundColor="@color/iron"
+                        app:rcBackgroundPadding="3dp"
+                        app:rcMax="100"
+                        app:rcProgress="30"
+                        app:rcProgressColor="@color/colorPrimaryDark"
+                        app:rcRadius="4dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1 Bintang :"
+                        android:textColor="@color/colorPrimaryDark" />
+
+                    <TextView
+                        android:id="@+id/bintangSatu"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="10"
+                        android:textColor="@color/colorPrimaryDark" />
+
+                    <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+                        android:id="@+id/progressBarBintangSatu"
+                        android:layout_width="match_parent"
+                        android:layout_height="17dp"
+                        android:layout_marginLeft="5dp"
+                        app:rcBackgroundColor="@color/iron"
+                        app:rcBackgroundPadding="3dp"
+                        app:rcMax="100"
+                        app:rcProgress="30"
+                        app:rcProgressColor="@color/colorPrimaryDark"
+                        app:rcRadius="4dp" />
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+</android.support.v7.widget.CardView>
