@@ -123,6 +123,8 @@ public class LokasiPedagangMemberActivity extends AppCompatActivity implements
     private ImageLoader imageLoader;
     private Handler handler;
     private Runnable runnable;
+    private String userId;
+    private String id;
 
     static {
         AndroidLoggerFactory.configureDefaultLogger(LokasiPedagangMemberActivity.class.getPackage());
@@ -140,6 +142,9 @@ public class LokasiPedagangMemberActivity extends AppCompatActivity implements
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        SharedPreferences prefs = getSharedPreferences(String.valueOf(R.string.my_prefs), MODE_PRIVATE);
+        id = prefs.getString("id", null);
 
         //Drawer
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -247,6 +252,10 @@ public class LokasiPedagangMemberActivity extends AppCompatActivity implements
         }else if (id == R.id.nav_pengaturan_akun) {
             startActivity(new Intent(LokasiPedagangMemberActivity.this, SettingAkunPembeli.class));
         }else if (id == R.id.nav_keluar) {
+
+            userId = "";
+            editUserIdPembeli();
+
             SharedPreferences settings = getSharedPreferences(String.valueOf(R.string.my_prefs), Context.MODE_PRIVATE);
             settings.edit().clear().apply();
             Intent intent = new Intent(LokasiPedagangMemberActivity.this, LokasiPedagangActivity.class);
@@ -828,5 +837,22 @@ public class LokasiPedagangMemberActivity extends AppCompatActivity implements
             status = false;
         }
         return status;
+    }
+
+    public void editUserIdPembeli(){
+        JSONObject dataToSend = null;
+        try {
+            dataToSend = new JSONObject()
+                    .put("idPembeli", id)
+                    .put("userIdPembeli", userId);
+            assert dataToSend != null;
+            PostMethod postMethod = (PostMethod) new PostMethod().execute(
+                    "http://carmate.id/index.php/Pembeli_controller/editUserIdPembeli",
+                    dataToSend.toString()
+            );
+            Log.i("Tahap",postMethod.get());
+        } catch (JSONException | InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 }

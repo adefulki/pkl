@@ -1,5 +1,6 @@
 package com.kota201.jtk.pkl;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -9,16 +10,22 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.developers.smartytoast.SmartyToast;
 import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -49,6 +56,7 @@ import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import info.hoang8f.android.segmented.SegmentedGroup;
 
 /**
  * Created by AdeFulki on 7/20/2017.
@@ -88,11 +96,17 @@ public class DetailPedagangMemberActivity extends AppCompatActivity implements O
     private Dagangan dagangan;
     private Pedagang pedagang;
     private ArrayList<Produk> listProduk;
+    private LayoutInflater inflater;
     private int[] tabIcons = {
             R.drawable.ic_restaurant,
             R.drawable.ic_person_white,
             R.drawable.ic_stars
     };
+    private SegmentedGroup radioGroupPemberitahuan;
+    private RadioButton radioBtnOn;
+    private RadioButton radioBtnOff;
+    private EditText inputJarakPemberitahuan;
+    private Boolean status;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -162,7 +176,7 @@ public class DetailPedagangMemberActivity extends AppCompatActivity implements O
 
         btnBerlangganan.setOnClickListener(mustLogin);
         btnObrolan.setOnClickListener(mustLogin);
-        btnPemberitahuan.setOnClickListener(mustLogin);
+        btnPemberitahuan.setOnClickListener(pemberitahuan);
     }
 
     View.OnClickListener mustLogin = new View.OnClickListener() {
@@ -170,6 +184,62 @@ public class DetailPedagangMemberActivity extends AppCompatActivity implements O
         public void onClick(View view) {
             finish();
             startActivity(new Intent(DetailPedagangMemberActivity.this, LoginActivity.class));
+        }
+    };
+
+    View.OnClickListener pemberitahuan = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if (dagangan.getStatusBerlangganan()){
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(DetailPedagangMemberActivity.this);
+                LayoutInflater inflater = getLayoutInflater();
+                View dialogView = inflater.inflate(R.layout.dialog_pemberitahuan, null);
+                radioGroupPemberitahuan = (SegmentedGroup) dialogView.findViewById(R.id.radioGroupPemberitahuan);
+                radioBtnOn = (RadioButton) dialogView.findViewById(R.id.radioBtnOn);
+                radioBtnOff = (RadioButton) dialogView.findViewById(R.id.radioBtnOff);
+                inputJarakPemberitahuan = (EditText) dialogView.findViewById(R.id.inputJarakPemberitahuan);
+                if (dagangan.getStatusNotifikasi()){
+                    radioBtnOn.setChecked(true);
+                    status = true;
+                }else {
+                    radioBtnOff.setChecked(true);
+                    status = false;
+                }
+                dialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (radioBtnOn.isChecked()){
+                            status = true;
+                            btnPemberitahuan.setColorNormal(getResources().getColor(R.color.colorOnline));
+                            dagangan.setStatusNotifikasi(true);
+
+                        }else {
+                            status = false;
+                            btnPemberitahuan.setColorNormal(getResources().getColor(R.color.colorOffline));
+                            dagangan.setStatusNotifikasi(false);
+                        }
+                        editPemberitahuan();
+                    }
+                });
+                dialogBuilder.setNegativeButton("Batal", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                dialogBuilder.setView(dialogView);
+                AlertDialog alertDialog = dialogBuilder.create();
+                alertDialog.show();
+                Button nbutton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+                nbutton.setTextColor(getResources()
+                        .getColor(R.color.colorSecondary));
+                Button pbutton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                pbutton.setTextColor(getResources()
+                        .getColor(R.color.colorSecondary));
+            }else{
+                SmartyToast.makeText(getApplicationContext(),"Berlangganan Terlebih Dahulu",SmartyToast.LENGTH_SHORT,SmartyToast.WARNING);
+            }
+
         }
     };
 
@@ -311,6 +381,25 @@ public class DetailPedagangMemberActivity extends AppCompatActivity implements O
             onBackPressed();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void editPemberitahuan(){
+        JSONObject dataToSend = null;
+        try {
+            dataToSend = new JSONObject()
+                    .put("idPembeli", id)
+                    .put("idDagangan", dagangan.getIdDagangan())
+                    .put("jarakNotifikasi", inputJarakPemberitahuan.getText())
+                    .put("statusNotifikasi", status);
+            assert dataToSend != null;
+            PostMethod postMethod = (PostMethod) new PostMethod().execute(
+                    "http://carmate.id/index.php/Notifikasi_controller/changeStatusNotifikasi",
+                    dataToSend.toString()
+            );
+            Log.i("Tahap",postMethod.get());
+        } catch (JSONException | InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 
     public ArrayList<Produk> getProduk(){

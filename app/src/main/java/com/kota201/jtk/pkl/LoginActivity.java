@@ -13,7 +13,9 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.developers.smartytoast.SmartyToast;
+import com.kota201.jtk.pkl.restful.PostMethod;
 import com.kota201.jtk.pkl.service.NetworkChangeReceiver;
+import com.onesignal.OneSignal;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,6 +48,7 @@ public class LoginActivity extends AppCompatActivity {
     int role;
     private String id;
     private String idDagangan;
+    private String userId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -115,8 +118,21 @@ public class LoginActivity extends AppCompatActivity {
     public void onLoginSuccess() {
         String noPonsel = inputNoPonsel.getText().toString();
         SmartyToast.makeText(getBaseContext(),"Login Berhasil",SmartyToast.LENGTH_SHORT,SmartyToast.DONE);
+        OneSignal.idsAvailable(new OneSignal.IdsAvailableHandler() {
+            @Override
+            public void idsAvailable(String uId, String registrationId) {
+                Log.i("test-userid", "User:" + uId);
+                userId = uId;
+                if (registrationId != null)
+                    Log.i("test-registrationid", "registrationId:" + registrationId);
+
+            }
+        });
         if(role == 1){
             //jika pedagang
+
+            editUserIdPedagang();
+
             SharedPreferences.Editor editor = getSharedPreferences(String.valueOf(R.string.my_prefs), MODE_PRIVATE).edit();
             editor.putInt("role",1);
             editor.putString("noPonsel",noPonsel);
@@ -140,6 +156,9 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
         }else{
             //jika pembeli
+
+            editUserIdPembeli();
+
             SharedPreferences.Editor editor = getSharedPreferences(String.valueOf(R.string.my_prefs), MODE_PRIVATE).edit();
             editor.putInt("role",2);
             editor.putString("noPonsel",noPonsel);
@@ -439,6 +458,40 @@ public class LoginActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             return null;
+        }
+    }
+
+    public void editUserIdPembeli(){
+        JSONObject dataToSend = null;
+        try {
+            dataToSend = new JSONObject()
+                    .put("idPembeli", id)
+                    .put("userIdPembeli", userId);
+            assert dataToSend != null;
+            PostMethod postMethod = (PostMethod) new PostMethod().execute(
+                    "http://carmate.id/index.php/Pembeli_controller/editUserIdPembeli",
+                    dataToSend.toString()
+            );
+            Log.i("Tahap",postMethod.get());
+        } catch (JSONException | InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void editUserIdPedagang(){
+        JSONObject dataToSend = null;
+        try {
+            dataToSend = new JSONObject()
+                    .put("idPedagang", id)
+                    .put("userIdPedagang", userId);
+            assert dataToSend != null;
+            PostMethod postMethod = (PostMethod) new PostMethod().execute(
+                    "http://carmate.id/index.php/Pedagang_controller/editUserIdPedagang",
+                    dataToSend.toString()
+            );
+            Log.i("Tahap",postMethod.get());
+        } catch (JSONException | InterruptedException | ExecutionException e) {
+            e.printStackTrace();
         }
     }
 }
