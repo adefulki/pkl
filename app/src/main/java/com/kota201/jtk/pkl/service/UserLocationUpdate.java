@@ -58,7 +58,7 @@ public class UserLocationUpdate extends Service {
             if (role == 1){
                 idDagangan = prefs.getString("idDagangan", null);
                 editLokasiBerdagang();
-            }else{
+            }else if(role ==2){
                 editLokasiPembeli();
             }
             mLastLocation.set(location);

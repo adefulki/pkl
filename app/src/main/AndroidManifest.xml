@@ -109,6 +109,11 @@
         <activity
             android:name=".DetailPedagangMemberActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity
+            android:name=".PedagangMainActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
         <activity
             android:name=".PilihProduk"
             android:theme="@style/AppTheme"

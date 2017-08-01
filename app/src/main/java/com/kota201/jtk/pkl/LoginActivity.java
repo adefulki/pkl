@@ -131,8 +131,6 @@ public class LoginActivity extends AppCompatActivity {
         if(role == 1){
             //jika pedagang
 
-            editUserIdPedagang();
-
             SharedPreferences.Editor editor = getSharedPreferences(String.valueOf(R.string.my_prefs), MODE_PRIVATE).edit();
             editor.putInt("role",1);
             editor.putString("noPonsel",noPonsel);
@@ -151,13 +149,13 @@ public class LoginActivity extends AppCompatActivity {
 
             editor.apply();
 
-            Intent intent = new Intent(LoginActivity.this, null);
+            editUserIdPedagang();
+
+            Intent intent = new Intent(LoginActivity.this, PedagangMainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }else{
             //jika pembeli
-
-            editUserIdPembeli();
 
             SharedPreferences.Editor editor = getSharedPreferences(String.valueOf(R.string.my_prefs), MODE_PRIVATE).edit();
             editor.putInt("role",2);
@@ -172,6 +170,8 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             editor.apply();
+
+            editUserIdPembeli();
 
             Intent intent = new Intent(LoginActivity.this, LokasiPedagangMemberActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);

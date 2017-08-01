@@ -25,45 +25,21 @@
     <string name="toolbar_action_voice_title">Voice</string>
     <string name="search_hint">Search</string>
 
-    <string name="strange">Doctor Strange was an egotistical but very brilliant surgeon.
-        After a car accident destroys his hands and hinders his ability to perform surgery,
-        he searches the globe for a way to repair them and encounters the Ancient One. After
-        becoming one of the old Sorcerer Supreme\'s students, he becomes a practitioner of both
-        the mystical arts as well as martial arts. Along with knowing many powerful spells, he
-        has a costume with two mystical objects - the Cloak of Levitation and Eye of Agamotto
-        that gives him added powers. Strange is aided along the way by
-        his friend and servant to the Sorcerer Supreme, Wong, and a large assortment of mystical o
-        bjects. He takes up residence in a mansion called the Sanctum Sanctorum, located in
-        New York City. Later, Strange takes the title of Sorcerer Supreme.
-    Doctor Strange was an egotistical but very brilliant surgeon.
-        After a car accident destroys his hands and hinders his ability to perform surgery,
-        he searches the globe for a way to repair them and encounters the Ancient One. After
-        becoming one of the old Sorcerer Supreme\'s students, he becomes a practitioner of both
-        the mystical arts as well as martial arts. Along with knowing many powerful spells, he
-        has a costume with two mystical objects - the Cloak of Levitation and Eye of Agamotto
-        that gives him added powers. Strange is aided along the way by
-        his friend and servant to the Sorcerer Supreme, Wong, and a large assortment of mystical o
-        bjects. He takes up residence in a mansion called the Sanctum Sanctorum, located in
-        New York City. Later, Strange takes the title of Sorcerer Supreme.
-    Doctor Strange was an egotistical but very brilliant surgeon.
-        After a car accident destroys his hands and hinders his ability to perform surgery,
-        he searches the globe for a way to repair them and encounters the Ancient One. After
-        becoming one of the old Sorcerer Supreme\'s students, he becomes a practitioner of both
-        the mystical arts as well as martial arts. Along with knowing many powerful spells, he
-        has a costume with two mystical objects - the Cloak of Levitation and Eye of Agamotto
-        that gives him added powers. Strange is aided along the way by
-        his friend and servant to the Sorcerer Supreme, Wong, and a large assortment of mystical o
-        bjects. He takes up residence in a mansion called the Sanctum Sanctorum, located in
-        New York City. Later, Strange takes the title of Sorcerer Supreme.
-    Doctor Strange was an egotistical but very brilliant surgeon.
-        After a car accident destroys his hands and hinders his ability to perform surgery,
-        he searches the globe for a way to repair them and encounters the Ancient One. After
-        becoming one of the old Sorcerer Supreme\'s students, he becomes a practitioner of both
-        the mystical arts as well as martial arts. Along with knowing many powerful spells, he
-        has a costume with two mystical objects - the Cloak of Levitation and Eye of Agamotto
-        that gives him added powers. Strange is aided along the way by
-        his friend and servant to the Sorcerer Supreme, Wong, and a large assortment of mystical o
-        bjects. He takes up residence in a mansion called the Sanctum Sanctorum, located in
-        New York City. Later, Strange takes the title of Sorcerer Supreme.</string>
+    <string name="judul">judul</string>
+    <string name="kamu_apa_sekarang">belum ada deskripsi</string>
+    <string name="nama_dagangan">Es Krim</string>
+    <string name="deskripsi_dagangan">Es Krim ini sangat lezat dan terbuat dari susu murni dan permentasi alami</string>
+    <string name="type_bedagang">Type Bedagang</string>
+    <string name="diam">Diam</string>
+    <string name="berkeliling">Berkeliling</string>
+    <string name="nama_pedagang">Syamsidin</string>
+    <string name="email_pedagang">syamsidin@gmail.com</string>
+    <string name="hp_pedagang">08573423233</string>
+    <string name="password">*********</string>
+    <string name="alamat">Surade Jampangkulon</string>
+    <string name="statistik_pengunjung">Statistik Pengunjung</string>
+    <string name="pengujung">500 Pengunjung</string>
+    <string name="statistik_pelanggan">Statistik Pelanggan</string>
+    <string name="pelanggan">400 Pelanggan</string>
 
 </resources>

@@ -39,6 +39,8 @@ public class SplashActivity extends Activity{
                         Log.i("test-role",String.valueOf(role));
                         if (role == 1){
                             //tampilan pedagang
+                            startActivity(new Intent(SplashActivity.this, PedagangMainActivity.class));
+                            finish();
                         }else if (role == 2){
                             startActivity(new Intent(SplashActivity.this, LokasiPedagangMemberActivity.class));
                             finish();

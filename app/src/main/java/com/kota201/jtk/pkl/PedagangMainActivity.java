@@ -1,32 +1,29 @@
 package com.kota201.jtk.pkl;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.RadioButton;
+import android.widget.Switch;
 import android.widget.TextView;
 
-import com.developers.smartytoast.SmartyToast;
-import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -34,9 +31,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.kota201.jtk.pkl.fragment.PenilaianDetailPedagangMemberFragment;
-import com.kota201.jtk.pkl.fragment.ProdukDetailPedagangMemberFragment;
-import com.kota201.jtk.pkl.fragment.TentangDetailPedagangMemberFragment;
+import com.kota201.jtk.pkl.fragment.PenilaianPedagangFragment;
+import com.kota201.jtk.pkl.fragment.StatistikFragment;
 import com.kota201.jtk.pkl.model.Dagangan;
 import com.kota201.jtk.pkl.model.Pedagang;
 import com.kota201.jtk.pkl.model.Penilaian;
@@ -44,7 +40,9 @@ import com.kota201.jtk.pkl.model.Produk;
 import com.kota201.jtk.pkl.restful.PostMethod;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+import com.nostra13.universalimageloader.utils.L;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,28 +54,21 @@ import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import info.hoang8f.android.segmented.SegmentedGroup;
 
 /**
  * Created by AdeFulki on 7/20/2017.
  */
 
-public class DetailPedagangMemberActivity extends AppCompatActivity implements OnMapReadyCallback{
+public class PedagangMainActivity extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener{
 
     @BindView(R.id.fotoDagangan)
     ImageView fotoDagangan;
-    @BindView(R.id.btnBerlangganan)
-    FloatingActionButton btnBerlangganan;
-    @BindView(R.id.btnObrolan)
-    FloatingActionButton btnObrolan;
-    @BindView(R.id.btnPemberitahuan)
-    FloatingActionButton btnPemberitahuan;
     @BindView(R.id.namaDagangan)
     TextView namaDagangan;
     @BindView(R.id.deskripsiDagangan)
     TextView deskripsiDagangan;
     @BindView(R.id.statusBerjualan)
-    TextView statusBerjualan;
+    Switch statusBerjualan;
     @BindView(R.id.pelanggan)
     TextView pelanggan;
     @BindView(R.id.mengunjungi)
@@ -88,41 +79,39 @@ public class DetailPedagangMemberActivity extends AppCompatActivity implements O
     ViewPager viewPager;
     @BindView(R.id.tabs)
     TabLayout tabLayout;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout drawer;
+    @BindView(R.id.nav_view)
+    NavigationView navigationView;
 
-    private String id;
     private GoogleMap mMap;
     private UiSettings mUiSettings;
     private String idDagangan;
+    private String id;
     private Dagangan dagangan;
     private Pedagang pedagang;
     private ArrayList<Produk> listProduk;
-    private LayoutInflater inflater;
     private int[] tabIcons = {
-            R.drawable.ic_restaurant,
-            R.drawable.ic_person_white,
+            R.drawable.ic_insert_chart_white,
             R.drawable.ic_stars
     };
-    private SegmentedGroup radioGroupPemberitahuan;
-    private RadioButton radioBtnOn;
-    private RadioButton radioBtnOff;
-    private EditText inputJarakPemberitahuan;
-    private Boolean status;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.detail_pedagang);
+        setContentView(R.layout.pedagang);
 
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
+        //Drawer
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+        navigationView.setNavigationItemSelectedListener(this);
         //Show "back" button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-
-        SharedPreferences prefs = getSharedPreferences(String.valueOf(R.string.my_prefs), MODE_PRIVATE);
-        id = prefs.getString("id", null);
 
         dagangan = new Dagangan();
         pedagang = new Pedagang();
@@ -132,16 +121,19 @@ public class DetailPedagangMemberActivity extends AppCompatActivity implements O
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            idDagangan = extras.getString("idDagangan");
-            Log.i("test-idDagangan",idDagangan);
-        }
+        SharedPreferences prefs = getSharedPreferences(String.valueOf(R.string.my_prefs), MODE_PRIVATE);
+        id = prefs.getString("id", null);
+        idDagangan = prefs.getString("idDagangan", null);
+
+        //image loader
+        ImageLoader imageLoader = ImageLoader.getInstance();
+        imageLoader.init(new ImageLoaderConfiguration.Builder(this).build());
+        L.disableLogging();
 
         DisplayImageOptions options = new DisplayImageOptions.Builder()
                 .displayer(new RoundedBitmapDisplayer((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, getResources().getDisplayMetrics())))
                 .build();
-        ImageLoader imageLoader = ImageLoader.getInstance();
+        imageLoader = ImageLoader.getInstance();
         imageLoader.displayImage("drawable://" + R.drawable.default3, fotoDagangan, options);
 
         getDetail();
@@ -150,118 +142,25 @@ public class DetailPedagangMemberActivity extends AppCompatActivity implements O
         namaDagangan.setText(dagangan.getNamaDagangan());
         deskripsiDagangan.setText(dagangan.getDeskripsiDagangan());
         pelanggan.setText(String.valueOf(dagangan.getCountPelanggan()));
-        if (dagangan.getStatusBerjualan()){
-            statusBerjualan.setText("Sedang Berjualan");
-            statusBerjualan.setBackgroundColor(getResources().getColor(R.color.colorOnline));
-        }else {
-            statusBerjualan.setText("Tidak Berjualan");
-            statusBerjualan.setBackgroundColor(getResources().getColor(R.color.colorOffline));
-        }
+        if(dagangan.getStatusBerjualan())
+            statusBerjualan.setChecked(true);
+        else
+            statusBerjualan.setChecked(false);
 
-        if (!dagangan.getStatusBerlangganan()){
-            btnBerlangganan.setColorNormal(getResources().getColor(R.color.colorOffline));
-        }else{
-            btnBerlangganan.setColorNormal(getResources().getColor(R.color.colorOnline));
-        }
-
-        if (!dagangan.getStatusNotifikasi()){
-            btnPemberitahuan.setColorNormal(getResources().getColor(R.color.colorOffline));
-        }else{
-            btnPemberitahuan.setColorNormal(getResources().getColor(R.color.colorOnline));
-        }
+        statusBerjualan.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                editStatusBerjualan(isChecked);
+            }
+        });
 
         setupViewPager(viewPager);
         tabLayout.setupWithViewPager(viewPager);
         setupTabIcons();
-
-        btnBerlangganan.setOnClickListener(berlangganan);
-        btnObrolan.setOnClickListener(mustLogin);
-        btnPemberitahuan.setOnClickListener(pemberitahuan);
     }
-
-    View.OnClickListener mustLogin = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            finish();
-            startActivity(new Intent(DetailPedagangMemberActivity.this, LoginActivity.class));
-        }
-    };
-
-    View.OnClickListener berlangganan = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if (dagangan.getStatusBerlangganan()){
-                deleteBerlangganan();
-                dagangan.setStatusBerlangganan(false);
-                btnBerlangganan.setColorNormal(getResources().getColor(R.color.colorOffline));
-            }else{
-                addBerlangganan();
-                dagangan.setStatusBerlangganan(true);
-                btnBerlangganan.setColorNormal(getResources().getColor(R.color.colorOnline));
-            }
-        }
-    };
-
-    View.OnClickListener pemberitahuan = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if (dagangan.getStatusBerlangganan()){
-                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(DetailPedagangMemberActivity.this);
-                LayoutInflater inflater = getLayoutInflater();
-                View dialogView = inflater.inflate(R.layout.dialog_pemberitahuan, null);
-                radioGroupPemberitahuan = (SegmentedGroup) dialogView.findViewById(R.id.radioGroupPemberitahuan);
-                radioBtnOn = (RadioButton) dialogView.findViewById(R.id.radioBtnOn);
-                radioBtnOff = (RadioButton) dialogView.findViewById(R.id.radioBtnOff);
-                inputJarakPemberitahuan = (EditText) dialogView.findViewById(R.id.inputJarakPemberitahuan);
-                if (dagangan.getStatusNotifikasi()){
-                    radioBtnOn.setChecked(true);
-                    status = true;
-                }else {
-                    radioBtnOff.setChecked(true);
-                    status = false;
-                }
-                dialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (radioBtnOn.isChecked()){
-                            status = true;
-                            btnPemberitahuan.setColorNormal(getResources().getColor(R.color.colorOnline));
-                            dagangan.setStatusNotifikasi(true);
-
-                        }else {
-                            status = false;
-                            btnPemberitahuan.setColorNormal(getResources().getColor(R.color.colorOffline));
-                            dagangan.setStatusNotifikasi(false);
-                        }
-                        editPemberitahuan();
-                    }
-                });
-                dialogBuilder.setNegativeButton("Batal", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                dialogBuilder.setView(dialogView);
-                AlertDialog alertDialog = dialogBuilder.create();
-                alertDialog.show();
-                Button nbutton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-                nbutton.setTextColor(getResources()
-                        .getColor(R.color.colorSecondary));
-                Button pbutton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
-                pbutton.setTextColor(getResources()
-                        .getColor(R.color.colorSecondary));
-            }else{
-                SmartyToast.makeText(getApplicationContext(),"Berlangganan Terlebih Dahulu",SmartyToast.LENGTH_SHORT,SmartyToast.WARNING);
-            }
-
-        }
-    };
 
     private void setupTabIcons() {
         tabLayout.getTabAt(0).setIcon(tabIcons[0]);
         tabLayout.getTabAt(1).setIcon(tabIcons[1]);
-        tabLayout.getTabAt(2).setIcon(tabIcons[2]);
     }
 
     public void getDetail(){
@@ -269,7 +168,7 @@ public class DetailPedagangMemberActivity extends AppCompatActivity implements O
         try {
             dataToSend = new JSONObject()
                     .put("idDagangan", idDagangan)
-                    .put("idPembeli", id);
+                    .put("idPembeli", "");
             assert dataToSend != null;
             PostMethod postMethod = (PostMethod) new PostMethod().execute(
                     "http://carmate.id/index.php/Dagangan_controller/getDetailDagangan",
@@ -287,7 +186,6 @@ public class DetailPedagangMemberActivity extends AppCompatActivity implements O
             dagangan.setStatusBerjualan(Jobject.getBoolean("statusBerjualan"));
             dagangan.setCountPelanggan(Jobject.getInt("countPelanggan"));
             dagangan.setStatusBerlangganan(Jobject.getBoolean("statusBerlangganan"));
-            dagangan.setStatusNotifikasi(Jobject.getBoolean("statusNotifikasi"));
             dagangan.setMeanPenilaianDagangan((int) Jobject.getDouble("meanPenilaianDagangan"));
             dagangan.setCountPenilaianDagangan(Jobject.getInt("countPenilaianDagangan"));
             Log.i("test","selesai parsing dagangan");
@@ -336,9 +234,8 @@ public class DetailPedagangMemberActivity extends AppCompatActivity implements O
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFrag(new ProdukDetailPedagangMemberFragment(), "PRODUK");
-        adapter.addFrag(new TentangDetailPedagangMemberFragment(), "TENTANG");
-        adapter.addFrag(new PenilaianDetailPedagangMemberFragment(), "PENILAIAN");
+        adapter.addFrag(new StatistikFragment(), "STATISTIK");
+        adapter.addFrag(new PenilaianPedagangFragment(), "PENILAIAN");
         viewPager.setAdapter(adapter);
     }
 
@@ -384,64 +281,47 @@ public class DetailPedagangMemberActivity extends AppCompatActivity implements O
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.share, menu);
+        return true;
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_beranda) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else if (id == R.id.nav_login) {
+        } else if (id == R.id.nav_registrasi) {
+        } else if (id == R.id.nav_tentang) {
+            startActivity(new Intent(PedagangMainActivity.this, SettingAkunPedagang.class));
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId()==R.id.share){
-        }
-        if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    public void editPemberitahuan(){
-        JSONObject dataToSend = null;
-        try {
-            dataToSend = new JSONObject()
-                    .put("idPembeli", id)
-                    .put("idDagangan", dagangan.getIdDagangan())
-                    .put("jarakNotifikasi", inputJarakPemberitahuan.getText())
-                    .put("statusNotifikasi", status);
-            assert dataToSend != null;
-            PostMethod postMethod = (PostMethod) new PostMethod().execute(
-                    "http://carmate.id/index.php/Notifikasi_controller/changeStatusNotifikasi",
-                    dataToSend.toString()
-            );
-            Log.i("Tahap",postMethod.get());
-        } catch (JSONException | InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
         }
     }
 
-    public void addBerlangganan(){
+    public void editStatusBerjualan(Boolean isChecked){
         JSONObject dataToSend = null;
         try {
             dataToSend = new JSONObject()
-                    .put("idPembeli", id)
-                    .put("idDagangan", dagangan.getIdDagangan());
+                    .put("idDagangan", idDagangan)
+                    .put("statusBerjualan", isChecked);
             assert dataToSend != null;
             PostMethod postMethod = (PostMethod) new PostMethod().execute(
-                    "http://carmate.id/index.php/Pelanggan_controller/addPelanggan",
-                    dataToSend.toString()
-            );
-            Log.i("Tahap",postMethod.get());
-        } catch (JSONException | InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-    }
-    public void deleteBerlangganan(){
-        JSONObject dataToSend = null;
-        try {
-            dataToSend = new JSONObject()
-                    .put("idPembeli", id)
-                    .put("idDagangan", dagangan.getIdDagangan());
-            assert dataToSend != null;
-            PostMethod postMethod = (PostMethod) new PostMethod().execute(
-                    "http://carmate.id/index.php/Pelanggan_controller/removePelanggan",
+                    "http://carmate.id/index.php/Dagangan_controller/changeStatusBerjualan",
                     dataToSend.toString()
             );
             Log.i("Tahap",postMethod.get());

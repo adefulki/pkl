@@ -2,19 +2,21 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary">
+    android:background="@color/white_alpha">
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="24dp"
-        android:paddingRight="24dp">
+        android:paddingRight="24dp"
+        android:paddingTop="25dp"
+        android:paddingBottom="25dp">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Foto Profil"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/colorPrimaryDark"
             android:id="@+id/textView"
             android:textSize="18sp" />
 
@@ -22,193 +24,213 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Tekan gambar untuk mengganti foto"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/colorPrimaryDark"
             android:id="@+id/textView2"
             android:textSize="12sp"
             android:layout_marginBottom="15dp"/>
 
         <ImageView
-            android:id="@+id/fotoPembeli"
-            android:layout_width="match_parent"
+            android:id="@+id/inputFotoPedagang"
+            android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:background="@drawable/image_selector"
-            android:minHeight="150dp"
-            android:minWidth="200dp"
             android:padding="5dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/default3" />
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/default1" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nama"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="18sp"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="290dp"
+            android:orientation="horizontal"
+            android:layout_margin="5dp">
+            <EditText android:id="@+id/inputNamaPedagang"
+                android:layout_width="260dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:textColorHint="@color/colorAccent">
-                <EditText android:id="@+id/namaPembeli"
-                    android:layout_width="282dp"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:text="Tukimin"
-                    android:hint="Nama"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:textColor="@color/colorAccent"
-                    android:textColorHint="@color/colorPrimaryDarker"
-                    android:focusable="false"/>
-            </android.support.design.widget.TextInputLayout>
+                android:inputType="text"
+                android:hint="Nama"
+                android:textColor="@color/colorPrimary"
+                android:background="@drawable/edit_text_style2"
+                android:textColorHint="@color/colorPrimaryLight"
+                android:focusable="false"/>
 
-            <ImageView
-                android:id="@+id/imageView1"
+            <ImageButton
+                android:id="@+id/btnEditNamaPedagang"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_edit"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"/>
+                android:src="@drawable/ic_edit_primary"
+                android:layout_margin="5dp"
+                android:background="@color/white_alpha"/>
 
         </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Email"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="18sp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="5dp">
+            <EditText android:id="@+id/inputEmailPedagang"
+                android:layout_width="260dp"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:hint="Email"
+                android:textColor="@color/colorPrimary"
+                android:background="@drawable/edit_text_style2"
+                android:textColorHint="@color/colorPrimaryLight"
+                android:focusable="false"/>
+
+            <ImageButton
+                android:id="@+id/btnEditEmailPedagang"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_edit_primary"
+                android:layout_margin="5dp"
+                android:background="@color/white_alpha"/>
+
+        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No Ponsel"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="18sp"/>
         <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="290dp"
+        android:orientation="horizontal"
+            android:layout_margin="5dp">
+            <EditText android:id="@+id/inputNoPonselPedagang"
+                android:layout_width="260dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:textColorHint="@color/colorAccent">
-                <EditText android:id="@+id/emailPembeli"
-                    android:layout_width="282dp"
-                    android:layout_height="wrap_content"
-                    android:inputType="textEmailAddress"
-                    android:hint="Email"
-                    android:text="tukimin@gmail.com"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:textColor="@color/colorAccent"
-                    android:textColorHint="@color/colorPrimaryDarker"
-                    android:focusable="false"/>
-            </android.support.design.widget.TextInputLayout>
+                android:inputType="phone"
+                android:hint="No Ponsel"
+                android:textColor="@color/colorPrimary"
+                android:background="@drawable/edit_text_style2"
+                android:textColorHint="@color/colorPrimaryLight"
+                android:focusable="false"/>
 
-            <ImageView
-            android:id="@+id/imageView2"
+            <ImageButton
+                android:id="@+id/btnEditNoPonselPedagang"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_edit_primary"
+                android:layout_margin="5dp"
+                android:background="@color/white_alpha"/>
+
+        </LinearLayout>
+
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_edit"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"/>
-
-        </LinearLayout>
-
+            android:text="Password"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="18sp"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="290dp"
+            android:orientation="horizontal"
+            android:layout_margin="5dp">
+            <EditText android:id="@+id/inputPasswordLamaPedagang"
+                android:layout_width="260dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:textColorHint="@color/colorAccent">
-                <EditText android:id="@+id/noPonselPembeli"
-                    android:layout_width="282dp"
-                    android:layout_height="wrap_content"
-                    android:inputType="phone"
-                    android:hint="No Ponsel"
-                    android:text="087823629021"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:textColor="@color/colorAccent"
-                    android:textColorHint="@color/colorPrimaryDarker"
-                    android:focusable="false"/>
-            </android.support.design.widget.TextInputLayout>
+                android:inputType="textPassword"
+                android:hint="Password"
+                android:textColor="@color/colorPrimary"
+                android:background="@drawable/edit_text_style2"
+                android:textColorHint="@color/colorPrimaryLight"
+                android:visibility="gone"/>
 
-            <ImageView
-                android:id="@+id/imageView3"
+            <ImageButton
+                android:id="@+id/btnEditPasswordPedagang"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_edit"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"/>
+                android:src="@drawable/ic_edit_primary"
+                android:layout_margin="5dp"
+                android:background="@color/white_alpha"/>
+
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="290dp"
+            android:orientation="vertical"
+            android:id="@+id/passwordBaruLayout"
+            android:visibility="gone">
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:textColorHint="@color/colorAccent">
-                <EditText android:id="@+id/passwordPembeli"
-                    android:layout_width="282dp"
+                android:text="Password Baru"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="18sp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="5dp">
+                <EditText android:id="@+id/inputPasswordBaruPedagang"
+                    android:layout_width="260dp"
                     android:layout_height="wrap_content"
                     android:inputType="textPassword"
-                    android:text="qwerty123"
-                    android:hint="Email"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:textColor="@color/colorAccent"
-                    android:textColorHint="@color/colorPrimaryDarker"
-                    android:focusable="false"/>
-            </android.support.design.widget.TextInputLayout>
+                    android:hint="Password"
+                    android:textColor="@color/colorPrimary"
+                    android:background="@drawable/edit_text_style2"
+                    android:textColorHint="@color/colorPrimaryLight"/>
 
-            <ImageView
-                android:id="@+id/imageView4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_edit"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"/>
+                <ImageButton
+                    android:id="@+id/btnEditPasswordBaruPedagang"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_check_primary"
+                    android:layout_margin="5dp"
+                    android:background="@color/white_alpha"/>
 
+            </LinearLayout>
         </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Alamat"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="18sp"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="290dp"
+            android:orientation="horizontal"
+            android:layout_margin="5dp">
+            <EditText android:id="@+id/inputAlamatPedagang"
+                android:layout_width="260dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:textColorHint="@color/colorAccent">
-                <EditText android:id="@+id/alamatPembeli"
-                    android:layout_width="282dp"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:hint="Alamat"
-                    android:text="Jl Sekejati No.120 Rt.01 Rw.01 Bandung 40285"
-                    android:maxLines="4"
-                    android:singleLine="true"
-                    android:textColor="@color/colorAccent"
-                    android:textColorHint="@color/colorPrimaryDarker"
-                    android:focusable="false"/>
-            </android.support.design.widget.TextInputLayout>
+                android:inputType="text"
+                android:hint="Alamat"
+                android:textColor="@color/colorPrimary"
+                android:background="@drawable/edit_text_style2"
+                android:textColorHint="@color/colorPrimaryLight"
+                android:focusable="false"/>
 
-            <ImageView
-                android:id="@+id/imageView5"
+            <ImageButton
+                android:id="@+id/btnEditAlamatPedagang"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_edit"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"/>
+                android:src="@drawable/ic_edit_primary"
+                android:layout_margin="5dp"
+                android:background="@color/white_alpha"/>
 
         </LinearLayout>
-        <Button
-            android:id="@+id/btnSelesai"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="40dp"
-            android:text="Selesai"
-            android:textColor="@color/colorAccent"
-            android:backgroundTint="@color/colorPrimaryDark"/>
 
     </LinearLayout>
 </ScrollView>

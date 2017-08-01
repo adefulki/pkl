@@ -231,7 +231,6 @@ public class LokasiPedagangActivity extends AppCompatActivity implements
         } else if (id == R.id.nav_registrasi) {
             startActivity(new Intent(LokasiPedagangActivity.this, SignupActivity.class));
         } else if (id == R.id.nav_tentang) {
-            startActivity(new Intent(LokasiPedagangActivity.this, DetailPedagangActivity.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
